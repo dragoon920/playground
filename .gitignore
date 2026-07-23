@@ -20,3 +20,11 @@ Thumbs.db
 
 # Docker
 mysql_data/
+
+# Terraform / deploy keys
+infra/terraform/.terraform/
+infra/terraform/*.tfstate
+infra/terraform/*.tfstate.*
+infra/terraform/*.tfvars
+infra/terraform/playground-ec2.pem
+infra/terraform/.terraform.lock.hcl

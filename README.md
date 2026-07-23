@@ -81,3 +81,22 @@ cd backend
 cp ../.env.example .env   # or export the env vars
 go run .
 ```
+
+## Deploy to AWS (EC2 + Compose)
+
+Terraform creates an EC2 instance that runs Docker Compose. GitHub Actions redeploys on push to `main`.
+
+```bash
+cd infra/terraform
+terraform init
+terraform apply
+```
+
+After apply, add GitHub repo secrets:
+
+| Secret | Value |
+|--------|--------|
+| `EC2_HOST` | Terraform output `public_ip` |
+| `EC2_SSH_KEY` | Contents of `infra/terraform/playground-ec2.pem` |
+
+Then open the `frontend_url` / `api_url` outputs.

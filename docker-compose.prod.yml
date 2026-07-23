@@ -1,0 +1,7 @@
+# Production overrides for EC2
+services:
+  mysql:
+    ports: []
+
+  web:
+    volumes: []
