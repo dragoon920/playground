@@ -1,0 +1,56 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: playground-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: playground
+      MYSQL_USER: playground
+      MYSQL_PASSWORD: playground
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ./backend
+    container_name: playground-api
+    restart: unless-stopped
+    environment:
+      PORT: "8080"
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_USER: playground
+      DB_PASSWORD: playground
+      DB_NAME: playground
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./frontend
+    container_name: playground-web
+    restart: unless-stopped
+    environment:
+      VITE_API_PROXY: http://api:8080
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api
+
+volumes:
+  mysql_data:

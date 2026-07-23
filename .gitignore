@@ -1,0 +1,22 @@
+# Env
+.env
+.env.local
+
+# Go
+backend/tmp/
+backend/bin/
+*.exe
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Docker
+mysql_data/

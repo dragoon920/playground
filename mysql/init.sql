@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS playground;
+GRANT ALL PRIVILEGES ON playground.* TO 'playground'@'%';
+FLUSH PRIVILEGES;
