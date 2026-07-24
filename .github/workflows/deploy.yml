@@ -21,5 +21,8 @@ jobs:
             cd /opt/playground
             sudo git fetch origin main
             sudo git reset --hard origin/main
-            sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+            sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml build
+            # Refresh frontend deps in the node_modules volume (bind mount hides image modules)
+            sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm --entrypoint npm web install
+            sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate
             sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
