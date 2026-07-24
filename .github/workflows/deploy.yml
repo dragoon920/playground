@@ -17,8 +17,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             set -e
+            sudo git config --global --add safe.directory /opt/playground
             cd /opt/playground
-            git fetch origin main
-            git reset --hard origin/main
+            sudo git fetch origin main
+            sudo git reset --hard origin/main
             sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
             sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
