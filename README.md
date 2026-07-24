@@ -20,15 +20,25 @@ Then open http://localhost:5173
 
 API health: http://localhost:8080/api/health
 
+## Auth (default admin)
+
+| Email | Password |
+|-------|----------|
+| `admin@playground.local` | `admin123` |
+
+After login you get the **Users** admin page (list / create / delete).
+
 ## API
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/health` | Health check |
-| `GET` | `/api/items` | List items |
-| `POST` | `/api/items` | Create `{ "title": "..." }` |
-| `PATCH` | `/api/items/:id` | Update `{ "title"?: "...", "done"?: true }` |
-| `DELETE` | `/api/items/:id` | Delete item |
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `GET` | `/api/health` | — | Health check |
+| `POST` | `/api/auth/login` | — | `{ email, password }` → JWT |
+| `GET` | `/api/auth/me` | Bearer | Current user |
+| `GET` | `/api/users` | Admin | List users |
+| `POST` | `/api/users` | Admin | Create user |
+| `DELETE` | `/api/users/:id` | Admin | Delete user |
+| `GET/POST/PATCH/DELETE` | `/api/items...` | Bearer | Items CRUD |
 
 ## Project layout
 

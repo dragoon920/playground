@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/user/playground/config"
 	"github.com/user/playground/database"
@@ -14,6 +15,7 @@ func main() {
 	_ = godotenv.Load()
 
 	cfg := config.Load()
+	_ = os.Setenv("JWT_SECRET", cfg.JWTSecret)
 
 	db, err := database.Connect(cfg)
 	if err != nil {

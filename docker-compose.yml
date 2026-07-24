@@ -31,6 +31,7 @@ services:
       DB_USER: playground
       DB_PASSWORD: playground
       DB_NAME: playground
+      JWT_SECRET: playground-dev-secret-change-me
     ports:
       - "8080:8080"
     depends_on:
@@ -44,6 +45,8 @@ services:
     restart: unless-stopped
     environment:
       VITE_API_PROXY: http://api:8080
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
     ports:
       - "5173:5173"
     volumes:
