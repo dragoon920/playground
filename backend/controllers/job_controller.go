@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/user/playground/models"
@@ -44,4 +45,52 @@ func (jc *JobController) Create(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, job)
+}
+
+func (jc *JobController) Update(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	var req models.UpdateJobRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid json"})
+		return
+	}
+
+	job, err := jc.service.Update(id, req)
+	if err == services.ErrNotFound {
+		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+		return
+	}
+	if err != nil {
+		msg := err.Error()
+		if strings.Contains(msg, "status must be") ||
+			strings.Contains(msg, "is required") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": msg})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+		return
+	}
+	c.JSON(http.StatusOK, job)
+}
+
+func (jc *JobController) Delete(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	if err := jc.service.Delete(id); err == services.ErrNotFound {
+		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.Status(http.StatusNoContent)
 }

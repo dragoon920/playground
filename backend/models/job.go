@@ -8,6 +8,7 @@ type Job struct {
 	Role      string    `json:"role"`
 	Salary    string    `json:"salary"`
 	URL       string    `json:"url"`
+	Note      string    `json:"note"`
 	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"created_at"`
 }
@@ -17,5 +18,15 @@ type CreateJobRequest struct {
 	Role    string `json:"role" binding:"required"`
 	Salary  string `json:"salary" binding:"required"`
 	URL     string `json:"url" binding:"required"`
+	Note    string `json:"note"`
 	Status  string `json:"status"`
+}
+
+type UpdateJobRequest struct {
+	Company *string `json:"company"`
+	Role    *string `json:"role"`
+	Salary  *string `json:"salary"`
+	URL     *string `json:"url"`
+	Note    *string `json:"note"`
+	Status  *string `json:"status"`
 }

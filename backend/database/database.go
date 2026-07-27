@@ -64,6 +64,7 @@ func Migrate(db *sql.DB) error {
 			role VARCHAR(255) NOT NULL,
 			salary VARCHAR(64) NOT NULL,
 			url VARCHAR(1024) NOT NULL DEFAULT '',
+			note TEXT NOT NULL DEFAULT (''),
 			status VARCHAR(32) NOT NULL DEFAULT 'applied',
 			created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -71,10 +72,13 @@ func Migrate(db *sql.DB) error {
 		return err
 	}
 
-	// Existing DBs created before url was added.
-	_, err := db.Exec(`ALTER TABLE jobs ADD COLUMN url VARCHAR(1024) NOT NULL DEFAULT ''`)
-	if err != nil && !isDuplicateColumnError(err) {
-		return err
+	for _, stmt := range []string{
+		`ALTER TABLE jobs ADD COLUMN url VARCHAR(1024) NOT NULL DEFAULT ''`,
+		`ALTER TABLE jobs ADD COLUMN note TEXT NOT NULL DEFAULT ('')`,
+	} {
+		if _, err := db.Exec(stmt); err != nil && !isDuplicateColumnError(err) {
+			return err
+		}
 	}
 	return nil
 }

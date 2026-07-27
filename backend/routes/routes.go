@@ -53,6 +53,8 @@ func Setup(db *sql.DB) *gin.Engine {
 
 				admin.GET("/jobs", jobs.List)
 				admin.POST("/jobs", jobs.Create)
+				admin.PATCH("/jobs/:id", jobs.Update)
+				admin.DELETE("/jobs/:id", jobs.Delete)
 			}
 		}
 	}
