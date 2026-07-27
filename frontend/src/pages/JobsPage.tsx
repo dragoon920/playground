@@ -13,6 +13,7 @@ export default function JobsPage() {
   const [company, setCompany] = useState('')
   const [role, setRole] = useState('')
   const [salary, setSalary] = useState('')
+  const [url, setUrl] = useState('')
   const [status, setStatus] = useState('applied')
 
   async function loadJobs() {
@@ -50,7 +51,7 @@ export default function JobsPage() {
     const res = await fetch(`${API}/jobs`, {
       method: 'POST',
       headers: jsonHeaders(token),
-      body: JSON.stringify({ company, role, salary, status }),
+      body: JSON.stringify({ company, role, salary, url, status }),
     })
     if (!res.ok) {
       const body = await res.json().catch(() => ({}))
@@ -60,6 +61,7 @@ export default function JobsPage() {
     setCompany('')
     setRole('')
     setSalary('')
+    setUrl('')
     setStatus('applied')
     await loadJobs()
   }
@@ -73,42 +75,51 @@ export default function JobsPage() {
 
       {error && <p className="mb-3 text-red-600">{error}</p>}
 
-      <form
-        className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-[1.2fr_1.2fr_0.9fr_0.8fr_auto]"
-        onSubmit={createJob}
-      >
-        <input
-          className={inputClass}
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          placeholder="Company"
-          required
-        />
-        <input
-          className={inputClass}
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          placeholder="Role"
-          required
-        />
-        <input
-          className={inputClass}
-          value={salary}
-          onChange={(e) => setSalary(e.target.value)}
-          placeholder="Salary"
-          required
-        />
-        <select
-          className={inputClass}
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          <option value="applied">applied</option>
-          <option value="rejected">rejected</option>
-        </select>
-        <button type="submit" className={btnPrimary}>
-          Add job
-        </button>
+      <form className="mb-4 grid grid-cols-1 gap-3" onSubmit={createJob}>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <input
+            className={inputClass}
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            placeholder="Company"
+            required
+          />
+          <input
+            className={inputClass}
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            placeholder="Role"
+            required
+          />
+          <input
+            className={inputClass}
+            value={salary}
+            onChange={(e) => setSalary(e.target.value)}
+            placeholder="Salary"
+            required
+          />
+          <select
+            className={inputClass}
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            <option value="applied">applied</option>
+            <option value="rejected">rejected</option>
+          </select>
+        </div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto]">
+          <input
+            type="url"
+            className={inputClass}
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://…"
+            required
+          />
+          <button type="submit" className={btnPrimary}>
+            Add job
+          </button>
+        </div>
       </form>
 
       <section className={cardClass}>
@@ -120,7 +131,7 @@ export default function JobsPage() {
           <table className="w-full border-collapse text-[0.95rem]">
             <thead>
               <tr>
-                {['ID', 'Company', 'Role', 'Salary', 'Status', 'Created'].map((h) => (
+                {['ID', 'Company', 'Role', 'Salary', 'URL', 'Status', 'Created'].map((h) => (
                   <th
                     key={h}
                     className="border-b border-gray-200 bg-gray-50 px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
@@ -137,6 +148,20 @@ export default function JobsPage() {
                   <td className="border-b border-gray-200 px-4 py-3.5">{job.company}</td>
                   <td className="border-b border-gray-200 px-4 py-3.5">{job.role}</td>
                   <td className="border-b border-gray-200 px-4 py-3.5">{job.salary}</td>
+                  <td className="border-b border-gray-200 px-4 py-3.5">
+                    {job.url ? (
+                      <a
+                        href={job.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-accent underline decoration-accent/40 hover:decoration-accent"
+                      >
+                        Link
+                      </a>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
                   <td className="border-b border-gray-200 px-4 py-3.5">
                     <span
                       className={`inline-block rounded-full border px-2 py-0.5 text-xs capitalize ${

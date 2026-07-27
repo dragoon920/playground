@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/user/playground/config"
@@ -56,15 +57,28 @@ func Migrate(db *sql.DB) error {
 		return err
 	}
 
-	_, err := db.Exec(`
+	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS jobs (
 			id BIGINT AUTO_INCREMENT PRIMARY KEY,
 			company VARCHAR(255) NOT NULL,
 			role VARCHAR(255) NOT NULL,
 			salary VARCHAR(64) NOT NULL,
+			url VARCHAR(1024) NOT NULL DEFAULT '',
 			status VARCHAR(32) NOT NULL DEFAULT 'applied',
 			created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-	`)
-	return err
+	`); err != nil {
+		return err
+	}
+
+	// Existing DBs created before url was added.
+	_, err := db.Exec(`ALTER TABLE jobs ADD COLUMN url VARCHAR(1024) NOT NULL DEFAULT ''`)
+	if err != nil && !isDuplicateColumnError(err) {
+		return err
+	}
+	return nil
+}
+
+func isDuplicateColumnError(err error) bool {
+	return err != nil && strings.Contains(strings.ToLower(err.Error()), "duplicate column")
 }

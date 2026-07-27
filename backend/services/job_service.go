@@ -31,7 +31,7 @@ func normalizeJobStatus(status string) (string, error) {
 
 func (s *JobService) List() ([]models.Job, error) {
 	rows, err := s.db.Query(`
-		SELECT id, company, role, salary, status, created_at
+		SELECT id, company, role, salary, url, status, created_at
 		FROM jobs
 		ORDER BY id DESC
 	`)
@@ -43,7 +43,7 @@ func (s *JobService) List() ([]models.Job, error) {
 	jobs := make([]models.Job, 0)
 	for rows.Next() {
 		var job models.Job
-		if err := rows.Scan(&job.ID, &job.Company, &job.Role, &job.Salary, &job.Status, &job.CreatedAt); err != nil {
+		if err := rows.Scan(&job.ID, &job.Company, &job.Role, &job.Salary, &job.URL, &job.Status, &job.CreatedAt); err != nil {
 			return nil, err
 		}
 		jobs = append(jobs, job)
@@ -54,10 +54,10 @@ func (s *JobService) List() ([]models.Job, error) {
 func (s *JobService) Get(id int64) (models.Job, error) {
 	var job models.Job
 	err := s.db.QueryRow(`
-		SELECT id, company, role, salary, status, created_at
+		SELECT id, company, role, salary, url, status, created_at
 		FROM jobs
 		WHERE id = ?
-	`, id).Scan(&job.ID, &job.Company, &job.Role, &job.Salary, &job.Status, &job.CreatedAt)
+	`, id).Scan(&job.ID, &job.Company, &job.Role, &job.Salary, &job.URL, &job.Status, &job.CreatedAt)
 	if err == sql.ErrNoRows {
 		return job, ErrNotFound
 	}
@@ -71,10 +71,11 @@ func (s *JobService) Create(req models.CreateJobRequest) (models.Job, error) {
 	}
 
 	res, err := s.db.Exec(
-		`INSERT INTO jobs (company, role, salary, status) VALUES (?, ?, ?, ?)`,
+		`INSERT INTO jobs (company, role, salary, url, status) VALUES (?, ?, ?, ?, ?)`,
 		strings.TrimSpace(req.Company),
 		strings.TrimSpace(req.Role),
 		strings.TrimSpace(req.Salary),
+		strings.TrimSpace(req.URL),
 		status,
 	)
 	if err != nil {
