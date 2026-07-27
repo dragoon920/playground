@@ -26,6 +26,7 @@ func Setup(db *sql.DB) *gin.Engine {
 	items := controllers.NewItemController(services.NewItemService(db))
 	auth := controllers.NewAuthController(userService)
 	users := controllers.NewUserController(userService)
+	jobs := controllers.NewJobController(services.NewJobService(db))
 
 	api := r.Group("/api")
 	{
@@ -49,6 +50,9 @@ func Setup(db *sql.DB) *gin.Engine {
 				admin.GET("/users", users.List)
 				admin.POST("/users", users.Create)
 				admin.DELETE("/users/:id", users.Delete)
+
+				admin.GET("/jobs", jobs.List)
+				admin.POST("/jobs", jobs.Create)
 			}
 		}
 	}

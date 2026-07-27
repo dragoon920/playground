@@ -1,4 +1,4 @@
-# Playground
+# TQ Playground
 
 Full-stack starter: **Go** API, **MySQL**, **React** (Vite), all via **Docker Compose**.
 
