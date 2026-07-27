@@ -20,12 +20,18 @@ func NewJobController(service *services.JobService) *JobController {
 }
 
 func (jc *JobController) List(c *gin.Context) {
-	jobs, err := jc.service.List()
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	perPage, _ := strconv.Atoi(c.DefaultQuery("per_page", "40"))
+	if perPage < 1 || perPage > 100 {
+		perPage = 40
+	}
+
+	result, err := jc.service.List(page, perPage)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, jobs)
+	c.JSON(http.StatusOK, result)
 }
 
 func (jc *JobController) Create(c *gin.Context) {

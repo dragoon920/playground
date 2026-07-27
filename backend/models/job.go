@@ -30,3 +30,11 @@ type UpdateJobRequest struct {
 	Note    *string `json:"note"`
 	Status  *string `json:"status"`
 }
+
+type JobListResponse struct {
+	Items      []Job `json:"items"`
+	Total      int64 `json:"total"`
+	Page       int   `json:"page"`
+	PerPage    int   `json:"per_page"`
+	TotalPages int   `json:"total_pages"`
+}

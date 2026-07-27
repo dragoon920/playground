@@ -3,7 +3,9 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { API, jsonHeaders } from '../lib/api'
 import { btnDanger, btnGhost, btnPrimary, cardClass, inputClass } from '../lib/styles'
-import type { Job } from '../types'
+import type { Job, JobListResponse } from '../types'
+
+const PAGE_SIZE = 40
 
 type JobForm = {
   company: string
@@ -38,6 +40,9 @@ export default function JobsPage() {
   const titleId = useId()
   const { token, user, isAdmin, booting } = useAuth()
   const [jobs, setJobs] = useState<Job[]>([])
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
@@ -45,14 +50,21 @@ export default function JobsPage() {
   const [form, setForm] = useState<JobForm>(emptyForm)
   const [saving, setSaving] = useState(false)
 
-  async function loadJobs() {
+  async function loadJobs(targetPage = page) {
     if (!token) return
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`${API}/jobs`, { headers: jsonHeaders(token) })
+      const res = await fetch(
+        `${API}/jobs?page=${targetPage}&per_page=${PAGE_SIZE}`,
+        { headers: jsonHeaders(token) },
+      )
       if (!res.ok) throw new Error('Failed to load jobs')
-      setJobs(await res.json())
+      const data: JobListResponse = await res.json()
+      setJobs(data.items || [])
+      setTotal(data.total)
+      setTotalPages(data.total_pages || 1)
+      setPage(data.page)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load jobs')
     } finally {
@@ -62,9 +74,9 @@ export default function JobsPage() {
 
   useEffect(() => {
     if (isAdmin && token) {
-      loadJobs()
+      loadJobs(page)
     }
-  }, [isAdmin, token])
+  }, [isAdmin, token, page])
 
   useEffect(() => {
     if (!modalOpen) return
@@ -136,7 +148,11 @@ export default function JobsPage() {
     setModalOpen(false)
     setEditingJob(null)
     setForm(emptyForm())
-    await loadJobs()
+    if (!editingJob && page !== 1) {
+      setPage(1)
+    } else {
+      await loadJobs(editingJob ? page : 1)
+    }
   }
 
   async function deleteJob(job: Job) {
@@ -151,8 +167,15 @@ export default function JobsPage() {
       setError(body.error || 'Could not delete job')
       return
     }
-    await loadJobs()
+    if (jobs.length === 1 && page > 1) {
+      setPage(page - 1)
+    } else {
+      await loadJobs(page)
+    }
   }
+
+  const rangeStart = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1
+  const rangeEnd = Math.min(page * PAGE_SIZE, total)
 
   return (
     <>
@@ -253,6 +276,35 @@ export default function JobsPage() {
           </div>
         )}
       </section>
+
+      {total > 0 && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-gray-500">
+            Showing {rangeStart}–{rangeEnd} of {total}
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className={btnGhost}
+              disabled={page <= 1 || loading}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Previous
+            </button>
+            <span className="text-sm text-gray-700">
+              Page {page} of {totalPages}
+            </span>
+            <button
+              type="button"
+              className={btnGhost}
+              disabled={page >= totalPages || loading}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {modalOpen && (
         <div

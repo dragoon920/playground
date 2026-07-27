@@ -23,3 +23,11 @@ export type Job = {
   status: 'applied' | 'rejected' | string
   created_at: string
 }
+
+export type JobListResponse = {
+  items: Job[]
+  total: number
+  page: number
+  per_page: number
+  total_pages: number
+}

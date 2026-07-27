@@ -29,14 +29,36 @@ func normalizeJobStatus(status string) (string, error) {
 	}
 }
 
-func (s *JobService) List() ([]models.Job, error) {
+func (s *JobService) List(page, perPage int) (models.JobListResponse, error) {
+	if page < 1 {
+		page = 1
+	}
+	if perPage < 1 {
+		perPage = 40
+	}
+
+	var total int64
+	if err := s.db.QueryRow(`SELECT COUNT(*) FROM jobs`).Scan(&total); err != nil {
+		return models.JobListResponse{}, err
+	}
+
+	totalPages := int((total + int64(perPage) - 1) / int64(perPage))
+	if totalPages == 0 {
+		totalPages = 1
+	}
+	if page > totalPages {
+		page = totalPages
+	}
+
+	offset := (page - 1) * perPage
 	rows, err := s.db.Query(`
 		SELECT id, company, role, salary, url, note, status, created_at
 		FROM jobs
 		ORDER BY id DESC
-	`)
+		LIMIT ? OFFSET ?
+	`, perPage, offset)
 	if err != nil {
-		return nil, err
+		return models.JobListResponse{}, err
 	}
 	defer rows.Close()
 
@@ -46,11 +68,21 @@ func (s *JobService) List() ([]models.Job, error) {
 		if err := rows.Scan(
 			&job.ID, &job.Company, &job.Role, &job.Salary, &job.URL, &job.Note, &job.Status, &job.CreatedAt,
 		); err != nil {
-			return nil, err
+			return models.JobListResponse{}, err
 		}
 		jobs = append(jobs, job)
 	}
-	return jobs, rows.Err()
+	if err := rows.Err(); err != nil {
+		return models.JobListResponse{}, err
+	}
+
+	return models.JobListResponse{
+		Items:      jobs,
+		Total:      total,
+		Page:       page,
+		PerPage:    perPage,
+		TotalPages: totalPages,
+	}, nil
 }
 
 func (s *JobService) Get(id int64) (models.Job, error) {
