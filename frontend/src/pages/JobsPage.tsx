@@ -78,15 +78,6 @@ export default function JobsPage() {
     }
   }, [isAdmin, token, page])
 
-  useEffect(() => {
-    if (!modalOpen) return
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') closeModal()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [modalOpen])
-
   if (booting) {
     return <p className="p-4 text-gray-500">Loading…</p>
   }
@@ -197,83 +188,96 @@ export default function JobsPage() {
         ) : jobs.length === 0 ? (
           <p className="p-5 text-gray-500">No jobs yet.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse text-[0.95rem]">
-              <thead>
-                <tr>
-                  {['Company', 'Role', 'Salary', 'Status', 'URL', 'Note', ''].map((h) => (
-                    <th
-                      key={h || 'actions'}
-                      className="border-b border-gray-200 bg-gray-50 px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {jobs.map((job) => (
-                  <tr key={job.id} className="align-middle">
-                    <td className="whitespace-nowrap border-b border-gray-200 px-4 py-3">
-                      {job.company}
-                    </td>
-                    <td className="whitespace-nowrap border-b border-gray-200 px-4 py-3">
-                      {job.role}
-                    </td>
-                    <td className="whitespace-nowrap border-b border-gray-200 px-4 py-3">
-                      {job.salary}
-                    </td>
-                    <td className="whitespace-nowrap border-b border-gray-200 px-4 py-3">
-                      <span
-                        className={`inline-block rounded-full border px-2 py-0.5 text-xs capitalize ${
-                          job.status === 'applied'
-                            ? 'border-teal-200 bg-teal-50 text-accent'
-                            : 'border-red-200 bg-red-50 text-red-600'
-                        }`}
-                      >
-                        {job.status}
-                      </span>
-                    </td>
-                    <td className="max-w-[10rem] truncate border-b border-gray-200 px-4 py-3">
-                      {job.url ? (
-                        <a
-                          href={job.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-accent underline decoration-accent/40 hover:decoration-accent"
-                        >
-                          Link
-                        </a>
-                      ) : (
-                        '—'
-                      )}
-                    </td>
-                    <td className="max-w-[14rem] truncate border-b border-gray-200 px-4 py-3 text-gray-600">
-                      {job.note || '—'}
-                    </td>
-                    <td className="whitespace-nowrap border-b border-gray-200 px-4 py-3 text-right">
-                      <div className="inline-flex gap-2">
-                        <button
-                          type="button"
-                          className={btnGhost}
-                          onClick={() => openEdit(job)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className={btnDanger}
-                          onClick={() => deleteJob(job)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+          <table className="w-full table-fixed border-collapse text-sm">
+            <colgroup>
+              <col className="w-[16%]" />
+              <col className="w-[12%]" />
+              <col className="w-[10%]" />
+              <col className="w-[10%]" />
+              <col className="w-[7%]" />
+              <col className="w-[18%]" />
+              <col className="w-[15%]" />
+              <col className="w-[12%]" />
+            </colgroup>
+            <thead>
+              <tr>
+                {['Company', 'Role', 'Salary', 'Status', 'URL', 'Note', 'Created', ''].map((h) => (
+                  <th
+                    key={h || 'actions'}
+                    className="border-b border-gray-200 bg-gray-50 px-2 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                  >
+                    {h}
+                  </th>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </tr>
+            </thead>
+            <tbody>
+              {jobs.map((job) => (
+                <tr key={job.id} className="align-top">
+                  <td className="break-words border-b border-gray-200 px-2 py-3">
+                    {job.company}
+                  </td>
+                  <td className="break-words border-b border-gray-200 px-2 py-3">
+                    {job.role || '—'}
+                  </td>
+                  <td className="break-words border-b border-gray-200 px-2 py-3">
+                    {job.salary || '—'}
+                  </td>
+                  <td className="border-b border-gray-200 px-2 py-3">
+                    <span
+                      className={`inline-block rounded-full border px-2 py-0.5 text-xs capitalize ${
+                        job.status === 'applied'
+                          ? 'border-teal-200 bg-teal-50 text-accent'
+                          : 'border-red-200 bg-red-50 text-red-600'
+                      }`}
+                    >
+                      {job.status}
+                    </span>
+                  </td>
+                  <td className="border-b border-gray-200 px-2 py-3">
+                    {job.url ? (
+                      <a
+                        href={job.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-accent underline decoration-accent/40 hover:decoration-accent"
+                      >
+                        Link
+                      </a>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                  <td className="break-words border-b border-gray-200 px-2 py-3 text-gray-600">
+                    {job.note || '—'}
+                  </td>
+                  <td className="border-b border-gray-200 px-2 py-3 text-gray-600">
+                    {new Date(job.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="border-b border-gray-200 px-2 py-3 text-right">
+                    <div className="inline-flex items-center gap-2">
+                      <button
+                        type="button"
+                        className={btnGhost}
+                        onClick={() => openEdit(job)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className={btnDanger}
+                        aria-label="Delete job"
+                        title="Delete"
+                        onClick={() => deleteJob(job)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </section>
 
@@ -307,16 +311,12 @@ export default function JobsPage() {
       )}
 
       {modalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-          onClick={closeModal}
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
             className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-lg"
-            onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-5 flex items-start justify-between gap-3">
               <h2 id={titleId} className="text-2xl font-semibold text-gray-900">
@@ -328,6 +328,12 @@ export default function JobsPage() {
             </div>
 
             {error && <p className="mb-3 text-red-600">{error}</p>}
+
+            {editingJob && (
+              <p className="mb-3 text-sm text-gray-500">
+                Created: {new Date(editingJob.created_at).toLocaleString()}
+              </p>
+            )}
 
             <form className="grid grid-cols-1 gap-3" onSubmit={submitModal}>
               <input
@@ -341,15 +347,13 @@ export default function JobsPage() {
                 className={inputClass}
                 value={form.role}
                 onChange={(e) => patchForm({ role: e.target.value })}
-                placeholder="Role"
-                required
+                placeholder="Role (optional)"
               />
               <input
                 className={inputClass}
                 value={form.salary}
                 onChange={(e) => patchForm({ salary: e.target.value })}
-                placeholder="Salary"
-                required
+                placeholder="Salary (optional)"
               />
               <select
                 className={inputClass}
@@ -360,12 +364,10 @@ export default function JobsPage() {
                 <option value="rejected">rejected</option>
               </select>
               <input
-                type="url"
                 className={inputClass}
                 value={form.url}
                 onChange={(e) => patchForm({ url: e.target.value })}
-                placeholder="https://…"
-                required
+                placeholder="URL (optional)"
               />
               <textarea
                 className={`${inputClass} min-h-24`}

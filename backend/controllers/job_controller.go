@@ -37,7 +37,7 @@ func (jc *JobController) List(c *gin.Context) {
 func (jc *JobController) Create(c *gin.Context) {
 	var req models.CreateJobRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "company, role, salary, and url are required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "company is required"})
 		return
 	}
 

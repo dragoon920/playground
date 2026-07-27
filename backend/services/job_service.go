@@ -101,6 +101,11 @@ func (s *JobService) Get(id int64) (models.Job, error) {
 }
 
 func (s *JobService) Create(req models.CreateJobRequest) (models.Job, error) {
+	company := strings.TrimSpace(req.Company)
+	if company == "" {
+		return models.Job{}, fmt.Errorf("company is required")
+	}
+
 	status, err := normalizeJobStatus(req.Status)
 	if err != nil {
 		return models.Job{}, err
@@ -108,7 +113,7 @@ func (s *JobService) Create(req models.CreateJobRequest) (models.Job, error) {
 
 	res, err := s.db.Exec(
 		`INSERT INTO jobs (company, role, salary, url, note, status) VALUES (?, ?, ?, ?, ?, ?)`,
-		strings.TrimSpace(req.Company),
+		company,
 		strings.TrimSpace(req.Role),
 		strings.TrimSpace(req.Salary),
 		strings.TrimSpace(req.URL),
@@ -139,25 +144,13 @@ func (s *JobService) Update(id int64, req models.UpdateJobRequest) (models.Job, 
 		job.Company = company
 	}
 	if req.Role != nil {
-		role := strings.TrimSpace(*req.Role)
-		if role == "" {
-			return job, fmt.Errorf("role is required")
-		}
-		job.Role = role
+		job.Role = strings.TrimSpace(*req.Role)
 	}
 	if req.Salary != nil {
-		salary := strings.TrimSpace(*req.Salary)
-		if salary == "" {
-			return job, fmt.Errorf("salary is required")
-		}
-		job.Salary = salary
+		job.Salary = strings.TrimSpace(*req.Salary)
 	}
 	if req.URL != nil {
-		url := strings.TrimSpace(*req.URL)
-		if url == "" {
-			return job, fmt.Errorf("url is required")
-		}
-		job.URL = url
+		job.URL = strings.TrimSpace(*req.URL)
 	}
 	if req.Note != nil {
 		job.Note = strings.TrimSpace(*req.Note)

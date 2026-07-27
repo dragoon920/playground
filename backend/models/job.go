@@ -15,9 +15,9 @@ type Job struct {
 
 type CreateJobRequest struct {
 	Company string `json:"company" binding:"required"`
-	Role    string `json:"role" binding:"required"`
-	Salary  string `json:"salary" binding:"required"`
-	URL     string `json:"url" binding:"required"`
+	Role    string `json:"role"`
+	Salary  string `json:"salary"`
+	URL     string `json:"url"`
 	Note    string `json:"note"`
 	Status  string `json:"status"`
 }
