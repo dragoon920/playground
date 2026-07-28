@@ -22,7 +22,14 @@ export default function Layout() {
             Todo
           </NavLink>
           <NavLink
+            to="/property-investment"
+            className={({ isActive }) => navBtn(isActive)}
+          >
+            Property Investment
+          </NavLink>
+          <NavLink
             to={isAdmin ? '/admin' : '/login'}
+            end
             className={({ isActive }) => navBtn(isActive)}
           >
             Users

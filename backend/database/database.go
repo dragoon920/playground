@@ -80,6 +80,61 @@ func Migrate(db *sql.DB) error {
 			return err
 		}
 	}
+
+	if _, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS suburbs (
+			id VARCHAR(64) PRIMARY KEY,
+			city_id VARCHAR(64) NOT NULL,
+			name VARCHAR(255) NOT NULL,
+			state VARCHAR(32) NOT NULL DEFAULT 'NSW',
+			postcode VARCHAR(16) NULL,
+			median_house_price DECIMAL(14,2) NULL,
+			median_unit_price DECIMAL(14,2) NULL,
+			lat DOUBLE NULL,
+			lng DOUBLE NULL,
+			boundary_id VARCHAR(128) NULL,
+			created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			UNIQUE KEY uq_suburbs_city_name (city_id, name),
+			KEY idx_suburbs_city_price (city_id, median_house_price)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+	`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS suburb_metrics (
+			id BIGINT AUTO_INCREMENT PRIMARY KEY,
+			suburb_id VARCHAR(64) NOT NULL,
+			factor_group VARCHAR(64) NOT NULL,
+			payload JSON NOT NULL,
+			source VARCHAR(255) NOT NULL DEFAULT '',
+			as_of DATE NULL,
+			origin VARCHAR(16) NOT NULL DEFAULT 'seed',
+			updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			UNIQUE KEY uq_suburb_factor (suburb_id, factor_group),
+			CONSTRAINT fk_suburb_metrics_suburb
+				FOREIGN KEY (suburb_id) REFERENCES suburbs(id) ON DELETE CASCADE
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+	`); err != nil {
+		return err
+	}
+
+	if _, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS property_ingestion_runs (
+			id BIGINT AUTO_INCREMENT PRIMARY KEY,
+			factor_group VARCHAR(64) NOT NULL,
+			provider VARCHAR(128) NOT NULL,
+			status VARCHAR(32) NOT NULL DEFAULT 'pending',
+			message TEXT NOT NULL DEFAULT (''),
+			started_at TIMESTAMP NULL,
+			finished_at TIMESTAMP NULL,
+			created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+	`); err != nil {
+		return err
+	}
+
 	return nil
 }
 

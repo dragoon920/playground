@@ -27,6 +27,7 @@ func Setup(db *sql.DB) *gin.Engine {
 	auth := controllers.NewAuthController(userService)
 	users := controllers.NewUserController(userService)
 	jobs := controllers.NewJobController(services.NewJobService(db))
+	property := controllers.NewPropertyController(services.NewPropertyService(db))
 
 	api := r.Group("/api")
 	{
@@ -38,6 +39,12 @@ func Setup(db *sql.DB) *gin.Engine {
 		api.POST("/items", items.Create)
 		api.PATCH("/items/:id", items.Update)
 		api.DELETE("/items/:id", items.Delete)
+
+		// Property investment tool (public read)
+		api.GET("/property/cities", property.ListCities)
+		api.POST("/property/rank", property.Rank)
+		api.GET("/property/suburbs/:id", property.GetSuburb)
+		api.GET("/property/map", property.Map)
 
 		authed := api.Group("/")
 		authed.Use(middleware.AuthRequired())

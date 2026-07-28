@@ -7,6 +7,7 @@ import (
 	"github.com/user/playground/config"
 	"github.com/user/playground/database"
 	"github.com/user/playground/routes"
+	"github.com/user/playground/services"
 
 	"github.com/joho/godotenv"
 )
@@ -25,6 +26,10 @@ func main() {
 
 	if err := database.Migrate(db); err != nil {
 		log.Fatalf("migrate: %v", err)
+	}
+
+	if err := services.SeedPropertyData(db); err != nil {
+		log.Fatalf("property seed: %v", err)
 	}
 
 	r := routes.Setup(db)
