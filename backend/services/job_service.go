@@ -29,7 +29,7 @@ func normalizeJobStatus(status string) (string, error) {
 	}
 }
 
-func (s *JobService) List(page, perPage int) (models.JobListResponse, error) {
+func (s *JobService) List(page, perPage int, company string) (models.JobListResponse, error) {
 	if page < 1 {
 		page = 1
 	}
@@ -37,8 +37,17 @@ func (s *JobService) List(page, perPage int) (models.JobListResponse, error) {
 		perPage = 40
 	}
 
+	company = strings.TrimSpace(company)
+	where := ""
+	args := make([]any, 0, 3)
+	if company != "" {
+		where = " WHERE company LIKE ?"
+		args = append(args, "%"+company+"%")
+	}
+
 	var total int64
-	if err := s.db.QueryRow(`SELECT COUNT(*) FROM jobs`).Scan(&total); err != nil {
+	countQuery := `SELECT COUNT(*) FROM jobs` + where
+	if err := s.db.QueryRow(countQuery, args...).Scan(&total); err != nil {
 		return models.JobListResponse{}, err
 	}
 
@@ -51,12 +60,13 @@ func (s *JobService) List(page, perPage int) (models.JobListResponse, error) {
 	}
 
 	offset := (page - 1) * perPage
+	listArgs := append(append([]any{}, args...), perPage, offset)
 	rows, err := s.db.Query(`
 		SELECT id, company, role, salary, url, note, status, created_at
-		FROM jobs
+		FROM jobs`+where+`
 		ORDER BY id DESC
 		LIMIT ? OFFSET ?
-	`, perPage, offset)
+	`, listArgs...)
 	if err != nil {
 		return models.JobListResponse{}, err
 	}

@@ -25,8 +25,9 @@ func (jc *JobController) List(c *gin.Context) {
 	if perPage < 1 || perPage > 100 {
 		perPage = 40
 	}
+	company := c.Query("company")
 
-	result, err := jc.service.List(page, perPage)
+	result, err := jc.service.List(page, perPage, company)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -49,16 +49,20 @@ export default function JobsPage() {
   const [editingJob, setEditingJob] = useState<Job | null>(null)
   const [form, setForm] = useState<JobForm>(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [companySearch, setCompanySearch] = useState('')
+  const [companyQuery, setCompanyQuery] = useState('')
 
-  async function loadJobs(targetPage = page) {
+  async function loadJobs(targetPage = page, company = companyQuery) {
     if (!token) return
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(
-        `${API}/jobs?page=${targetPage}&per_page=${PAGE_SIZE}`,
-        { headers: jsonHeaders(token) },
-      )
+      const params = new URLSearchParams({
+        page: String(targetPage),
+        per_page: String(PAGE_SIZE),
+      })
+      if (company.trim()) params.set('company', company.trim())
+      const res = await fetch(`${API}/jobs?${params}`, { headers: jsonHeaders(token) })
       if (!res.ok) throw new Error('Failed to load jobs')
       const data: JobListResponse = await res.json()
       setJobs(data.items || [])
@@ -73,10 +77,21 @@ export default function JobsPage() {
   }
 
   useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const next = companySearch.trim()
+      setCompanyQuery((prev) => {
+        if (prev !== next) setPage(1)
+        return next
+      })
+    }, 300)
+    return () => window.clearTimeout(timer)
+  }, [companySearch])
+
+  useEffect(() => {
     if (isAdmin && token) {
-      loadJobs(page)
+      loadJobs(page, companyQuery)
     }
-  }, [isAdmin, token, page])
+  }, [isAdmin, token, page, companyQuery])
 
   if (booting) {
     return <p className="p-4 text-gray-500">Loading…</p>
@@ -142,12 +157,12 @@ export default function JobsPage() {
     if (!editingJob && page !== 1) {
       setPage(1)
     } else {
-      await loadJobs(editingJob ? page : 1)
+      await loadJobs(editingJob ? page : 1, companyQuery)
     }
   }
 
   async function deleteJob(job: Job) {
-    if (!confirm(`Delete ${job.role} at ${job.company}?`)) return
+    if (!confirm(`Delete ${job.company}?`)) return
     setError(null)
     const res = await fetch(`${API}/jobs/${job.id}`, {
       method: 'DELETE',
@@ -161,7 +176,7 @@ export default function JobsPage() {
     if (jobs.length === 1 && page > 1) {
       setPage(page - 1)
     } else {
-      await loadJobs(page)
+      await loadJobs(page, companyQuery)
     }
   }
 
@@ -175,9 +190,18 @@ export default function JobsPage() {
           <h1 className="text-4xl font-semibold tracking-tight text-gray-900">Jobs</h1>
           <p className="mt-1.5 text-gray-500">Track applications in one list.</p>
         </div>
-        <button type="button" className={btnPrimary} onClick={openAdd}>
-          Add job
-        </button>
+        <div className="flex shrink-0 flex-nowrap items-center gap-3">
+          <input
+            className="w-56 shrink-0 rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none focus:border-accent focus:ring-2 focus:ring-accent/30"
+            value={companySearch}
+            onChange={(e) => setCompanySearch(e.target.value)}
+            placeholder="Search company…"
+            aria-label="Search by company name"
+          />
+          <button type="button" className={`${btnPrimary} shrink-0 whitespace-nowrap`} onClick={openAdd}>
+            Add job
+          </button>
+        </div>
       </header>
 
       {error && !modalOpen && <p className="mb-3 text-red-600">{error}</p>}
