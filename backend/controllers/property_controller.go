@@ -31,8 +31,12 @@ func (pc *PropertyController) Rank(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "price_min must be <= price_max"})
 		return
 	}
+	if !services.WeightsWellFormed(req.Weights) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid preference weights"})
+		return
+	}
 
-	resp, err := pc.service.RankStub(req)
+	resp, err := pc.service.Rank(req)
 	if err == services.ErrNotFound {
 		c.JSON(http.StatusNotFound, gin.H{"error": "unknown city"})
 		return

@@ -53,6 +53,20 @@ export interface DimensionScores {
   future_growth: number
 }
 
+export interface ScoreContribution {
+  label: string
+  value: string
+  points: number
+  available: boolean
+}
+
+export interface DimensionBreakdown {
+  investment: ScoreContribution[]
+  lifestyle: ScoreContribution[]
+  risk: ScoreContribution[]
+  future_growth: ScoreContribution[]
+}
+
 export interface RankedSuburb {
   suburb_id: string
   name: string
@@ -60,6 +74,7 @@ export interface RankedSuburb {
   score: number
   map_rating: MapRating
   dimension_scores: DimensionScores
+  dimension_breakdown: DimensionBreakdown
 }
 
 export interface RankResponse {

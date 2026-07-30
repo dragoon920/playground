@@ -75,13 +75,13 @@ description: "Task list for Property Investment Tool implementation"
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Implement weight normalization and dimension scoring + Top 100 rank in `backend/services/property_rank_service.go`
-- [ ] T016 [US2] Implement `POST /api/property/rank` in `backend/controllers/property_controller.go`
-- [ ] T017 [P] [US2] Build `CitySelect` in `frontend/src/components/property/CitySelect.tsx`
-- [ ] T018 [P] [US2] Build `PriceRangeSlider` in `frontend/src/components/property/PriceRangeSlider.tsx`
-- [ ] T019 [P] [US2] Build `PreferenceWeights` (four controls summing to 100%) in `frontend/src/components/property/PreferenceWeights.tsx`
-- [ ] T020 [US2] Build `Top100List` and wire filters → `POST /api/property/rank` in `frontend/src/components/property/Top100List.tsx` and `frontend/src/pages/PropertyInvestmentPage.tsx`
-- [ ] T021 [US2] Show limited/coming-soon messaging when `coverage` is not `full` in `frontend/src/pages/PropertyInvestmentPage.tsx`
+- [x] T015 [US2] Implement weight normalization and dimension scoring + Top 100 rank in `backend/services/property_rank_service.go`
+- [x] T016 [US2] Implement `POST /api/property/rank` in `backend/controllers/property_controller.go`
+- [x] T017 [P] [US2] Build `CitySelect` in `frontend/src/components/property/CitySelect.tsx`
+- [x] T018 [P] [US2] Build `PriceRangeSlider` in `frontend/src/components/property/PriceRangeSlider.tsx`
+- [x] T019 [P] [US2] Build `PreferenceWeights` (four controls summing to 100%) in `frontend/src/components/property/PreferenceWeights.tsx`
+- [x] T020 [US2] Build `Top100List` and wire filters → `POST /api/property/rank` in `frontend/src/components/property/Top100List.tsx` and `frontend/src/pages/PropertyInvestmentPage.tsx`
+- [x] T021 [US2] Show limited/coming-soon messaging when `coverage` is not `full` in `frontend/src/pages/PropertyInvestmentPage.tsx`
 
 **Checkpoint**: Filter → Top 100 journey works on seed data
 

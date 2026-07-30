@@ -95,13 +95,30 @@ type DimensionScores struct {
 	FutureGrowth float64 `json:"future_growth"`
 }
 
+// ScoreContribution is one input signal behind a dimension score.
+type ScoreContribution struct {
+	Label     string  `json:"label"`
+	Value     string  `json:"value"`
+	Points    float64 `json:"points"`
+	Available bool    `json:"available"`
+}
+
+// DimensionBreakdown lists the metrics that produced each dimension score.
+type DimensionBreakdown struct {
+	Investment   []ScoreContribution `json:"investment"`
+	Lifestyle    []ScoreContribution `json:"lifestyle"`
+	Risk         []ScoreContribution `json:"risk"`
+	FutureGrowth []ScoreContribution `json:"future_growth"`
+}
+
 type RankedSuburb struct {
-	SuburbID         string          `json:"suburb_id"`
-	Name             string          `json:"name"`
-	MedianHousePrice *float64        `json:"median_house_price"`
-	Score            float64         `json:"score"`
-	MapRating        MapRating       `json:"map_rating"`
-	DimensionScores  DimensionScores `json:"dimension_scores"`
+	SuburbID           string             `json:"suburb_id"`
+	Name               string             `json:"name"`
+	MedianHousePrice   *float64           `json:"median_house_price"`
+	Score              float64            `json:"score"`
+	MapRating          MapRating          `json:"map_rating"`
+	DimensionScores    DimensionScores    `json:"dimension_scores"`
+	DimensionBreakdown DimensionBreakdown `json:"dimension_breakdown"`
 }
 
 type RankResponse struct {
