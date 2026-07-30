@@ -4,6 +4,7 @@ import type {
   DimensionBreakdown,
   DimensionScores,
   MapRating,
+  PropertyType,
   RankedSuburb,
   ScoreContribution,
 } from '../../types/property'
@@ -15,6 +16,12 @@ const AUD = new Intl.NumberFormat('en-AU', {
 })
 
 const TIP_WIDTH = 288
+
+const TYPE_LABELS: Record<PropertyType, string> = {
+  house: 'house',
+  townhouse: 'townhouse',
+  apartment: 'apartment',
+}
 
 const DIMENSIONS: {
   key: keyof DimensionScores
@@ -124,8 +131,7 @@ function FactorTooltip({ tip }: { tip: TipState }) {
 
 type Props = {
   items: RankedSuburb[]
-  totalMatched: number
-  limit: number
+  propertyType: PropertyType
   loading: boolean
   error: string | null
   selectedId: string | null
@@ -135,8 +141,7 @@ type Props = {
 
 export default function Top100List({
   items,
-  totalMatched,
-  limit,
+  propertyType,
   loading,
   error,
   selectedId,
@@ -207,14 +212,6 @@ export default function Top100List({
 
   return (
     <div>
-      <p className="mb-3 text-sm text-gray-500">
-        Showing {items.length} of {totalMatched} match
-        {totalMatched === 1 ? '' : 'es'}
-        {totalMatched > limit ? ` (Top ${limit})` : ''}
-        {totalMatched < 100 ? ' — fewer than 100 in range' : ''}. Hover a factor bar to see how
-        that score was built.
-      </p>
-
       <ol
         className="max-h-[36rem] space-y-2 overflow-y-auto pr-1"
         onScroll={closeTip}
@@ -248,13 +245,13 @@ export default function Top100List({
                       </span>
                     </span>
                     <span className="mt-0.5 block text-xs tabular-nums text-gray-500">
-                      {item.median_house_price != null
-                        ? `Median house ${AUD.format(item.median_house_price)}`
-                        : 'Median house price unavailable'}
+                      {item.median_price != null
+                        ? `Median ${TYPE_LABELS[propertyType]} ${AUD.format(item.median_price)}`
+                        : `Median ${TYPE_LABELS[propertyType]} price unavailable`}
                     </span>
                   </span>
 
-                  <span className="shrink-0 text-left">
+                  <span className="w-14 shrink-0 text-left">
                     <span
                       className={`block text-xl font-semibold leading-tight tabular-nums ${scoreToneClass(item.score)}`}
                     >
@@ -265,7 +262,7 @@ export default function Top100List({
                     </span>
                   </span>
 
-                  <span className="grid w-full grid-cols-2 gap-x-5 gap-y-2 sm:ml-auto sm:w-auto sm:min-w-[19rem] sm:grid-cols-4">
+                  <span className="grid w-full grid-cols-2 gap-x-5 gap-y-2 sm:ml-auto sm:w-[21rem] sm:grid-cols-4">
                     {DIMENSIONS.map(({ key, label, bar }) => {
                       const value = item.dimension_scores[key]
                       return (
@@ -284,8 +281,8 @@ export default function Top100List({
                           onMouseLeave={closeTip}
                         >
                           <span className="flex items-baseline justify-between gap-2 text-xs">
-                            <span className="text-gray-500">{label}</span>
-                            <span className="font-medium tabular-nums text-gray-700">
+                            <span className="truncate text-gray-500">{label}</span>
+                            <span className="w-5 shrink-0 text-right font-medium tabular-nums text-gray-700">
                               {Math.round(value)}
                             </span>
                           </span>

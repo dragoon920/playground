@@ -48,18 +48,20 @@ type CitiesResponse struct {
 }
 
 type Suburb struct {
-	ID               string    `json:"id"`
-	CityID           string    `json:"city_id"`
-	Name             string    `json:"name"`
-	State            string    `json:"state"`
-	Postcode         *string   `json:"postcode,omitempty"`
-	MedianHousePrice *float64  `json:"median_house_price"`
-	MedianUnitPrice  *float64  `json:"median_unit_price"`
-	Lat              *float64  `json:"lat"`
-	Lng              *float64  `json:"lng"`
-	BoundaryID       *string   `json:"boundary_id,omitempty"`
-	CreatedAt        time.Time `json:"created_at,omitempty"`
-	UpdatedAt        time.Time `json:"updated_at,omitempty"`
+	ID                   string    `json:"id"`
+	CityID               string    `json:"city_id"`
+	Name                 string    `json:"name"`
+	State                string    `json:"state"`
+	Postcode             *string   `json:"postcode,omitempty"`
+	MedianHousePrice     *float64  `json:"median_house_price"`
+	MedianUnitPrice      *float64  `json:"median_unit_price"`
+	MedianTownhousePrice *float64  `json:"median_townhouse_price"`
+	MedianApartmentPrice *float64  `json:"median_apartment_price"`
+	Lat                  *float64  `json:"lat"`
+	Lng                  *float64  `json:"lng"`
+	BoundaryID           *string   `json:"boundary_id,omitempty"`
+	CreatedAt            time.Time `json:"created_at,omitempty"`
+	UpdatedAt            time.Time `json:"updated_at,omitempty"`
 }
 
 type SuburbMetric struct {
@@ -80,12 +82,21 @@ type PreferenceWeights struct {
 	FutureGrowth float64 `json:"future_growth"`
 }
 
+type PropertyType string
+
+const (
+	PropertyTypeHouse     PropertyType = "house"
+	PropertyTypeTownhouse PropertyType = "townhouse"
+	PropertyTypeApartment PropertyType = "apartment"
+)
+
 type RankRequest struct {
-	CityID   string            `json:"city_id" binding:"required"`
-	PriceMin float64           `json:"price_min"`
-	PriceMax float64           `json:"price_max"`
-	Weights  PreferenceWeights `json:"weights"`
-	Limit    int               `json:"limit"`
+	CityID       string            `json:"city_id" binding:"required"`
+	PropertyType PropertyType      `json:"property_type"`
+	PriceMin     float64           `json:"price_min"`
+	PriceMax     float64           `json:"price_max"`
+	Weights      PreferenceWeights `json:"weights"`
+	Limit        int               `json:"limit"`
 }
 
 type DimensionScores struct {
@@ -112,13 +123,18 @@ type DimensionBreakdown struct {
 }
 
 type RankedSuburb struct {
-	SuburbID           string             `json:"suburb_id"`
-	Name               string             `json:"name"`
-	MedianHousePrice   *float64           `json:"median_house_price"`
-	Score              float64            `json:"score"`
-	MapRating          MapRating          `json:"map_rating"`
-	DimensionScores    DimensionScores    `json:"dimension_scores"`
-	DimensionBreakdown DimensionBreakdown `json:"dimension_breakdown"`
+	SuburbID string `json:"suburb_id"`
+	Name     string `json:"name"`
+	// MedianPrice is the median for the requested property type.
+	MedianPrice          *float64           `json:"median_price"`
+	MedianHousePrice     *float64           `json:"median_house_price"`
+	MedianUnitPrice      *float64           `json:"median_unit_price"`
+	MedianTownhousePrice *float64           `json:"median_townhouse_price"`
+	MedianApartmentPrice *float64           `json:"median_apartment_price"`
+	Score                float64            `json:"score"`
+	MapRating            MapRating          `json:"map_rating"`
+	DimensionScores      DimensionScores    `json:"dimension_scores"`
+	DimensionBreakdown   DimensionBreakdown `json:"dimension_breakdown"`
 }
 
 type RankResponse struct {

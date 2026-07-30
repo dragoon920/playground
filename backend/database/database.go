@@ -90,6 +90,8 @@ func Migrate(db *sql.DB) error {
 			postcode VARCHAR(16) NULL,
 			median_house_price DECIMAL(14,2) NULL,
 			median_unit_price DECIMAL(14,2) NULL,
+			median_townhouse_price DECIMAL(14,2) NULL,
+			median_apartment_price DECIMAL(14,2) NULL,
 			lat DOUBLE NULL,
 			lng DOUBLE NULL,
 			boundary_id VARCHAR(128) NULL,
@@ -100,6 +102,15 @@ func Migrate(db *sql.DB) error {
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 	`); err != nil {
 		return err
+	}
+
+	for _, stmt := range []string{
+		`ALTER TABLE suburbs ADD COLUMN median_townhouse_price DECIMAL(14,2) NULL`,
+		`ALTER TABLE suburbs ADD COLUMN median_apartment_price DECIMAL(14,2) NULL`,
+	} {
+		if _, err := db.Exec(stmt); err != nil && !isDuplicateColumnError(err) {
+			return err
+		}
 	}
 
 	if _, err := db.Exec(`

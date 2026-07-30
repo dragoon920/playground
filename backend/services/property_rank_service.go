@@ -1,9 +1,9 @@
 package services
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"math"
 	"sort"
 	"strconv"
@@ -88,7 +88,15 @@ func (s *PropertyService) Rank(req models.RankRequest) (models.RankResponse, err
 		weights = models.PreferenceWeights{Investment: 25, Lifestyle: 25, Risk: 25, FutureGrowth: 25}
 	}
 
-	suburbs, err := s.listSuburbsInPriceRange(req.CityID, req.PriceMin, req.PriceMax)
+	propertyType := req.PropertyType
+	switch propertyType {
+	case models.PropertyTypeTownhouse, models.PropertyTypeApartment:
+		// keep as requested
+	default:
+		propertyType = models.PropertyTypeHouse
+	}
+
+	suburbs, err := s.listSuburbsInPriceRange(req.CityID, propertyType, req.PriceMin, req.PriceMax)
 	if err != nil {
 		return resp, err
 	}
@@ -107,13 +115,17 @@ func (s *PropertyService) Rank(req models.RankRequest) (models.RankResponse, err
 		dims, breakdown := scoreDimensions(metricsBySuburb[suburb.ID], suburb)
 		score := weightedScore(dims, weights)
 		items = append(items, models.RankedSuburb{
-			SuburbID:           suburb.ID,
-			Name:               suburb.Name,
-			MedianHousePrice:   suburb.MedianHousePrice,
-			Score:              score,
-			MapRating:          models.MapRatingNeutral, // set after sort
-			DimensionScores:    dims,
-			DimensionBreakdown: breakdown,
+			SuburbID:             suburb.ID,
+			Name:                 suburb.Name,
+			MedianPrice:          medianForType(suburb, propertyType),
+			MedianHousePrice:     suburb.MedianHousePrice,
+			MedianUnitPrice:      suburb.MedianUnitPrice,
+			MedianTownhousePrice: suburb.MedianTownhousePrice,
+			MedianApartmentPrice: suburb.MedianApartmentPrice,
+			Score:                score,
+			MapRating:            models.MapRatingNeutral, // set after sort
+			DimensionScores:      dims,
+			DimensionBreakdown:   breakdown,
 		})
 	}
 
@@ -151,17 +163,34 @@ func assignRelativeMapRatings(items []models.RankedSuburb) {
 	}
 }
 
-func (s *PropertyService) listSuburbsInPriceRange(cityID string, min, max float64) ([]models.Suburb, error) {
-	rows, err := s.db.Query(`
-		SELECT id, city_id, name, state, postcode,
-		       median_house_price, median_unit_price, lat, lng, boundary_id,
-		       created_at, updated_at
+// priceColumnFor maps a property type to the median column used for filtering.
+func priceColumnFor(propertyType models.PropertyType) string {
+	switch propertyType {
+	case models.PropertyTypeApartment:
+		return "median_apartment_price"
+	case models.PropertyTypeTownhouse:
+		return "median_townhouse_price"
+	default:
+		return "median_house_price"
+	}
+}
+
+func (s *PropertyService) listSuburbsInPriceRange(
+	cityID string,
+	propertyType models.PropertyType,
+	min, max float64,
+) ([]models.Suburb, error) {
+	priceCol := priceColumnFor(propertyType)
+	query := fmt.Sprintf(`
+		SELECT `+suburbColumns+`
 		FROM suburbs
 		WHERE city_id = ?
-		  AND median_house_price IS NOT NULL
-		  AND median_house_price >= ?
-		  AND median_house_price <= ?
-		ORDER BY name ASC`, cityID, min, max)
+		  AND %s IS NOT NULL
+		  AND %s >= ?
+		  AND %s <= ?
+		ORDER BY name ASC`, priceCol, priceCol, priceCol)
+
+	rows, err := s.db.Query(query, cityID, min, max)
 	if err != nil {
 		return nil, err
 	}
@@ -169,25 +198,25 @@ func (s *PropertyService) listSuburbsInPriceRange(cityID string, min, max float6
 
 	suburbs := make([]models.Suburb, 0)
 	for rows.Next() {
-		var suburb models.Suburb
-		var postcode, boundaryID sql.NullString
-		var housePrice, unitPrice, lat, lng sql.NullFloat64
-		if err := rows.Scan(
-			&suburb.ID, &suburb.CityID, &suburb.Name, &suburb.State, &postcode,
-			&housePrice, &unitPrice, &lat, &lng, &boundaryID,
-			&suburb.CreatedAt, &suburb.UpdatedAt,
-		); err != nil {
+		suburb, err := scanSuburb(rows)
+		if err != nil {
 			return nil, err
 		}
-		suburb.Postcode = nullStringPtr(postcode)
-		suburb.BoundaryID = nullStringPtr(boundaryID)
-		suburb.MedianHousePrice = nullFloatPtr(housePrice)
-		suburb.MedianUnitPrice = nullFloatPtr(unitPrice)
-		suburb.Lat = nullFloatPtr(lat)
-		suburb.Lng = nullFloatPtr(lng)
 		suburbs = append(suburbs, suburb)
 	}
 	return suburbs, rows.Err()
+}
+
+// medianForType returns the median price of the requested property type.
+func medianForType(suburb models.Suburb, propertyType models.PropertyType) *float64 {
+	switch propertyType {
+	case models.PropertyTypeApartment:
+		return suburb.MedianApartmentPrice
+	case models.PropertyTypeTownhouse:
+		return suburb.MedianTownhousePrice
+	default:
+		return suburb.MedianHousePrice
+	}
 }
 
 func (s *PropertyService) loadMetricsMap(cityID string) (map[string]map[string]map[string]any, error) {

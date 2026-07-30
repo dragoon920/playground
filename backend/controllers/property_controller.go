@@ -31,6 +31,13 @@ func (pc *PropertyController) Rank(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "price_min must be <= price_max"})
 		return
 	}
+	if req.PropertyType != "" &&
+		req.PropertyType != models.PropertyTypeHouse &&
+		req.PropertyType != models.PropertyTypeTownhouse &&
+		req.PropertyType != models.PropertyTypeApartment {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "property_type must be house, townhouse, or apartment"})
+		return
+	}
 	if !services.WeightsWellFormed(req.Weights) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid preference weights"})
 		return

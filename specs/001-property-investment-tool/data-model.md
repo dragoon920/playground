@@ -26,6 +26,8 @@ Static catalog in code or small table; v1: Sydney=`full`, others=`coming_soon`.
 | postcode | string | optional |
 | median_house_price | decimal/null | Filter + Price panel |
 | median_unit_price | decimal/null | |
+| median_townhouse_price | decimal/null | Filter when property_type=townhouse; derived from house/unit medians when seed has no explicit value |
+| median_apartment_price | decimal/null | Filter when property_type=apartment; defaults to the unit median |
 | lat / lng | float/null | Map centroid fallback |
 | boundary_id | string/null | GeoJSON feature id |
 | created_at / updated_at | timestamp | |
@@ -109,7 +111,7 @@ IngestionRun updates SuburbMetric rows
 
 ## Payload sketches (null = unavailable)
 
-**price**: median_house_price, median_unit_price, price_per_sqm, growth_1y, cagr_3y, cagr_5y, cagr_10y  
+**price**: median_house_price, median_unit_price, median_townhouse_price, median_apartment_price, price_per_sqm, growth_1y, cagr_3y, cagr_5y, cagr_10y  
 
 **sales**: sales_count, avg_days_on_market, auction_clearance, listings_count, monthly_trend  
 

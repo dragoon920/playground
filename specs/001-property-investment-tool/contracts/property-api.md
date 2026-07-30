@@ -27,6 +27,7 @@ Rank suburbs for filters and weights.
 ```json
 {
   "city_id": "sydney",
+  "property_type": "house",
   "price_min": 800000,
   "price_max": 1500000,
   "weights": {
@@ -38,6 +39,9 @@ Rank suburbs for filters and weights.
   "limit": 100
 }
 ```
+
+`property_type` is optional and accepts `house`, `townhouse`, or `apartment` (default `house`).
+The price range filters on the median for the chosen type.
 
 **Response 200**
 
@@ -52,7 +56,11 @@ Rank suburbs for filters and weights.
     {
       "suburb_id": "seven-hills",
       "name": "Seven Hills",
+      "median_price": 1200000,
       "median_house_price": 1200000,
+      "median_unit_price": 720000,
+      "median_townhouse_price": 985000,
+      "median_apartment_price": 720000,
       "score": 91,
       "map_rating": "good_buy",
       "dimension_scores": {
@@ -79,7 +87,7 @@ Rank suburbs for filters and weights.
 }
 ```
 
-**Errors**: 400 if `price_min` > `price_max` or weights invalid after normalization attempt.
+**Errors**: 400 if `price_min` > `price_max`, `property_type` is not a known type, or weights invalid after normalization attempt.
 
 ## GET /api/property/suburbs/:id
 

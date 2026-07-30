@@ -38,8 +38,11 @@ export interface PreferenceWeights {
   future_growth: number
 }
 
+export type PropertyType = 'house' | 'townhouse' | 'apartment'
+
 export interface RankRequest {
   city_id: string
+  property_type?: PropertyType
   price_min: number
   price_max: number
   weights: PreferenceWeights
@@ -70,7 +73,12 @@ export interface DimensionBreakdown {
 export interface RankedSuburb {
   suburb_id: string
   name: string
+  /** Median for the requested property type. */
+  median_price: number | null
   median_house_price: number | null
+  median_unit_price: number | null
+  median_townhouse_price: number | null
+  median_apartment_price: number | null
   score: number
   map_rating: MapRating
   dimension_scores: DimensionScores

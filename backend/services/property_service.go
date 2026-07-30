@@ -19,24 +19,26 @@ func (s *PropertyService) ListCities() models.CitiesResponse {
 	return models.CitiesResponse{Cities: ListPropertyCities()}
 }
 
-func (s *PropertyService) GetSuburb(id string) (models.Suburb, error) {
+const suburbColumns = `id, city_id, name, state, postcode,
+		       median_house_price, median_unit_price,
+		       median_townhouse_price, median_apartment_price,
+		       lat, lng, boundary_id, created_at, updated_at`
+
+// rowScanner covers both *sql.Row and *sql.Rows.
+type rowScanner interface {
+	Scan(dest ...any) error
+}
+
+func scanSuburb(row rowScanner) (models.Suburb, error) {
 	var suburb models.Suburb
 	var postcode, boundaryID sql.NullString
-	var housePrice, unitPrice, lat, lng sql.NullFloat64
+	var housePrice, unitPrice, townhousePrice, apartmentPrice, lat, lng sql.NullFloat64
 
-	err := s.db.QueryRow(`
-		SELECT id, city_id, name, state, postcode,
-		       median_house_price, median_unit_price, lat, lng, boundary_id,
-		       created_at, updated_at
-		FROM suburbs WHERE id = ?`, id).Scan(
+	if err := row.Scan(
 		&suburb.ID, &suburb.CityID, &suburb.Name, &suburb.State, &postcode,
-		&housePrice, &unitPrice, &lat, &lng, &boundaryID,
-		&suburb.CreatedAt, &suburb.UpdatedAt,
-	)
-	if err == sql.ErrNoRows {
-		return suburb, ErrNotFound
-	}
-	if err != nil {
+		&housePrice, &unitPrice, &townhousePrice, &apartmentPrice,
+		&lat, &lng, &boundaryID, &suburb.CreatedAt, &suburb.UpdatedAt,
+	); err != nil {
 		return suburb, err
 	}
 
@@ -44,17 +46,25 @@ func (s *PropertyService) GetSuburb(id string) (models.Suburb, error) {
 	suburb.BoundaryID = nullStringPtr(boundaryID)
 	suburb.MedianHousePrice = nullFloatPtr(housePrice)
 	suburb.MedianUnitPrice = nullFloatPtr(unitPrice)
+	suburb.MedianTownhousePrice = nullFloatPtr(townhousePrice)
+	suburb.MedianApartmentPrice = nullFloatPtr(apartmentPrice)
 	suburb.Lat = nullFloatPtr(lat)
 	suburb.Lng = nullFloatPtr(lng)
 	return suburb, nil
 }
 
+func (s *PropertyService) GetSuburb(id string) (models.Suburb, error) {
+	row := s.db.QueryRow(`SELECT `+suburbColumns+` FROM suburbs WHERE id = ?`, id)
+	suburb, err := scanSuburb(row)
+	if err == sql.ErrNoRows {
+		return suburb, ErrNotFound
+	}
+	return suburb, err
+}
+
 func (s *PropertyService) ListSuburbsByCity(cityID string) ([]models.Suburb, error) {
-	rows, err := s.db.Query(`
-		SELECT id, city_id, name, state, postcode,
-		       median_house_price, median_unit_price, lat, lng, boundary_id,
-		       created_at, updated_at
-		FROM suburbs WHERE city_id = ? ORDER BY name ASC`, cityID)
+	rows, err := s.db.Query(
+		`SELECT `+suburbColumns+` FROM suburbs WHERE city_id = ? ORDER BY name ASC`, cityID)
 	if err != nil {
 		return nil, err
 	}
@@ -62,22 +72,10 @@ func (s *PropertyService) ListSuburbsByCity(cityID string) ([]models.Suburb, err
 
 	suburbs := make([]models.Suburb, 0)
 	for rows.Next() {
-		var suburb models.Suburb
-		var postcode, boundaryID sql.NullString
-		var housePrice, unitPrice, lat, lng sql.NullFloat64
-		if err := rows.Scan(
-			&suburb.ID, &suburb.CityID, &suburb.Name, &suburb.State, &postcode,
-			&housePrice, &unitPrice, &lat, &lng, &boundaryID,
-			&suburb.CreatedAt, &suburb.UpdatedAt,
-		); err != nil {
+		suburb, err := scanSuburb(rows)
+		if err != nil {
 			return nil, err
 		}
-		suburb.Postcode = nullStringPtr(postcode)
-		suburb.BoundaryID = nullStringPtr(boundaryID)
-		suburb.MedianHousePrice = nullFloatPtr(housePrice)
-		suburb.MedianUnitPrice = nullFloatPtr(unitPrice)
-		suburb.Lat = nullFloatPtr(lat)
-		suburb.Lng = nullFloatPtr(lng)
 		suburbs = append(suburbs, suburb)
 	}
 	return suburbs, rows.Err()

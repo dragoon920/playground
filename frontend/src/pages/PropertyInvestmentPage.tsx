@@ -2,10 +2,17 @@ import { useEffect, useMemo, useState } from 'react'
 import CitySelect from '../components/property/CitySelect'
 import PreferenceWeightsControls from '../components/property/PreferenceWeights'
 import PriceRangeSlider from '../components/property/PriceRangeSlider'
+import PropertyTypeSelect from '../components/property/PropertyTypeSelect'
 import Top100List from '../components/property/Top100List'
 import { fetchCities, rankSuburbs } from '../lib/propertyApi'
 import { cardClass } from '../lib/styles'
-import type { City, PreferenceWeights, RankedSuburb, RankResponse } from '../types/property'
+import type {
+  City,
+  PreferenceWeights,
+  PropertyType,
+  RankedSuburb,
+  RankResponse,
+} from '../types/property'
 
 const DEFAULT_WEIGHTS: PreferenceWeights = {
   investment: 40,
@@ -20,6 +27,7 @@ export default function PropertyInvestmentPage() {
   const [citiesLoading, setCitiesLoading] = useState(true)
 
   const [cityId, setCityId] = useState('sydney')
+  const [propertyType, setPropertyType] = useState<PropertyType>('house')
   const [priceMin, setPriceMin] = useState(600_000)
   const [priceMax, setPriceMax] = useState(1_800_000)
   const [weights, setWeights] = useState<PreferenceWeights>(DEFAULT_WEIGHTS)
@@ -76,6 +84,7 @@ export default function PropertyInvestmentPage() {
       try {
         const res = await rankSuburbs({
           city_id: cityId,
+          property_type: propertyType,
           price_min: priceMin,
           price_max: priceMax,
           weights,
@@ -101,7 +110,7 @@ export default function PropertyInvestmentPage() {
       cancelled = true
       window.clearTimeout(timer)
     }
-  }, [cityId, priceMin, priceMax, weights, citiesLoading, citiesError])
+  }, [cityId, propertyType, priceMin, priceMax, weights, citiesLoading, citiesError])
 
   const items: RankedSuburb[] = rank?.items ?? []
 
@@ -125,30 +134,36 @@ export default function PropertyInvestmentPage() {
           <h2 id="property-filters-heading" className="text-lg font-semibold text-gray-900">
             Filters
           </h2>
-          <p className="mt-1 text-sm text-gray-500">
-            City, price range, and Investment / Lifestyle / Risk / Future Growth weights.
-          </p>
 
-          <div className="mt-4 grid gap-6 lg:grid-cols-3">
+          <div className="mt-4 grid gap-x-8 gap-y-6 lg:grid-cols-2">
             <div className="space-y-5">
-              {citiesLoading ? (
-                <p className="text-sm text-gray-500">Loading cities…</p>
-              ) : citiesError ? (
-                <p className="text-sm text-red-600">{citiesError}</p>
-              ) : (
-                <CitySelect cities={cities} value={cityId} onChange={setCityId} />
-              )}
-            </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  {citiesLoading ? (
+                    <p className="text-sm text-gray-500">Loading cities…</p>
+                  ) : citiesError ? (
+                    <p className="text-sm text-red-600">{citiesError}</p>
+                  ) : (
+                    <CitySelect cities={cities} value={cityId} onChange={setCityId} />
+                  )}
+                </div>
+                <PropertyTypeSelect
+                  value={propertyType}
+                  onChange={setPropertyType}
+                  disabled={!coverageFull && !!selectedCity}
+                />
+              </div>
 
-            <PriceRangeSlider
-              min={priceMin}
-              max={priceMax}
-              onChange={({ min, max }) => {
-                setPriceMin(min)
-                setPriceMax(max)
-              }}
-              disabled={!coverageFull && !!selectedCity}
-            />
+              <PriceRangeSlider
+                min={priceMin}
+                max={priceMax}
+                onChange={({ min, max }) => {
+                  setPriceMin(min)
+                  setPriceMax(max)
+                }}
+                disabled={!coverageFull && !!selectedCity}
+              />
+            </div>
 
             <PreferenceWeightsControls
               value={weights}
@@ -165,14 +180,10 @@ export default function PropertyInvestmentPage() {
           <h2 id="property-list-heading" className="text-lg font-semibold text-gray-900">
             Top 100
           </h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Ranked suburbs for the active filters and weights.
-          </p>
           <div className="mt-4">
             <Top100List
               items={items}
-              totalMatched={rank?.total_matched ?? 0}
-              limit={rank?.limit ?? 100}
+              propertyType={propertyType}
               loading={rankLoading}
               error={rankError}
               selectedId={selectedId}

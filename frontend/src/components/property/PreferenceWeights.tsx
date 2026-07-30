@@ -109,10 +109,6 @@ export default function PreferenceWeightsControls({ value, onChange, disabled }:
   return (
     <fieldset className="space-y-3" disabled={disabled}>
       <legend className="text-sm font-medium text-gray-700">Preference weights</legend>
-      <p className="text-xs text-gray-500">
-        Set how much each factor matters. Hover a name in the legend below for a short
-        explanation. Sliders move independently — ranking shares come from their relative sizes.
-      </p>
 
       <div className="space-y-2">
         <div
@@ -142,23 +138,21 @@ export default function PreferenceWeightsControls({ value, onChange, disabled }:
       </div>
 
       {KEYS.map((key) => (
-        <label key={key} className="block">
-          <div className="mb-1 flex items-center justify-between text-sm">
-            <span className="inline-flex items-center gap-1.5 font-medium text-gray-700">
-              <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${DOT_COLORS[key]}`} />
-              {LABELS[key]}
-            </span>
-            <span className="tabular-nums text-gray-600">{value[key]}</span>
-          </div>
+        <label key={key} className="flex items-center gap-3 text-sm">
+          <span className="inline-flex w-28 shrink-0 items-center gap-1.5 font-medium text-gray-700">
+            <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${DOT_COLORS[key]}`} />
+            {LABELS[key]}
+          </span>
           <input
             type="range"
-            className="w-full accent-[var(--color-accent,#16a34a)]"
+            className="min-w-0 flex-1 accent-[var(--color-accent,#16a34a)]"
             min={0}
             max={100}
             step={1}
             value={value[key]}
             onChange={(e) => onChange({ ...value, [key]: Number(e.target.value) })}
           />
+          <span className="w-7 shrink-0 text-right tabular-nums text-gray-600">{value[key]}</span>
         </label>
       ))}
 
