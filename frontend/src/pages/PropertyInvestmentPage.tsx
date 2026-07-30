@@ -15,10 +15,11 @@ import type {
 } from '../types/property'
 
 const DEFAULT_WEIGHTS: PreferenceWeights = {
-  investment: 40,
+  investment: 20,
   lifestyle: 20,
   risk: 20,
   future_growth: 20,
+  affordability: 20,
 }
 
 export default function PropertyInvestmentPage() {

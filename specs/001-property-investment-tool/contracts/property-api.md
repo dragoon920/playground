@@ -31,10 +31,11 @@ Rank suburbs for filters and weights.
   "price_min": 800000,
   "price_max": 1500000,
   "weights": {
-    "investment": 40,
+    "investment": 20,
     "lifestyle": 20,
     "risk": 20,
-    "future_growth": 20
+    "future_growth": 20,
+    "affordability": 20
   },
   "limit": 100
 }
@@ -67,7 +68,8 @@ The price range filters on the median for the chosen type.
         "investment": 88,
         "lifestyle": 75,
         "risk": 70,
-        "future_growth": 92
+        "future_growth": 92,
+        "affordability": 81
       }
     }
   ]

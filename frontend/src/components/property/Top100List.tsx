@@ -30,8 +30,9 @@ const DIMENSIONS: {
 }[] = [
   { key: 'investment', label: 'Investment', bar: 'bg-teal-700' },
   { key: 'lifestyle', label: 'Lifestyle', bar: 'bg-sky-600' },
-  { key: 'risk', label: 'Risk', bar: 'bg-amber-500' },
+  { key: 'risk', label: 'Stability', bar: 'bg-amber-500' },
   { key: 'future_growth', label: 'Growth', bar: 'bg-violet-600' },
+  { key: 'affordability', label: 'Affordability', bar: 'bg-rose-600' },
 ]
 
 function ratingLabel(rating: MapRating): string {
@@ -262,7 +263,7 @@ export default function Top100List({
                     </span>
                   </span>
 
-                  <span className="grid w-full grid-cols-2 gap-x-5 gap-y-2 sm:ml-auto sm:w-[21rem] sm:grid-cols-4">
+                  <span className="grid w-full grid-cols-2 gap-x-5 gap-y-2 sm:ml-auto sm:w-[28rem] sm:grid-cols-5">
                     {DIMENSIONS.map(({ key, label, bar }) => {
                       const value = item.dimension_scores[key]
                       return (

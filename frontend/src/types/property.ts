@@ -36,6 +36,7 @@ export interface PreferenceWeights {
   lifestyle: number
   risk: number
   future_growth: number
+  affordability: number
 }
 
 export type PropertyType = 'house' | 'townhouse' | 'apartment'
@@ -54,6 +55,7 @@ export interface DimensionScores {
   lifestyle: number
   risk: number
   future_growth: number
+  affordability: number
 }
 
 export interface ScoreContribution {
@@ -68,6 +70,7 @@ export interface DimensionBreakdown {
   lifestyle: ScoreContribution[]
   risk: ScoreContribution[]
   future_growth: ScoreContribution[]
+  affordability: ScoreContribution[]
 }
 
 export interface RankedSuburb {

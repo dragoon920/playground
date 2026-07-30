@@ -16,7 +16,9 @@ var ErrInvalidWeights = errors.New("weights must be finite and sum to a positive
 // WeightsWellFormed reports whether each weight is finite and non-negative.
 // An all-zero set is well formed: ranking treats it as equal weighting.
 func WeightsWellFormed(w models.PreferenceWeights) bool {
-	for _, v := range []float64{w.Investment, w.Lifestyle, w.Risk, w.FutureGrowth} {
+	for _, v := range []float64{
+		w.Investment, w.Lifestyle, w.Risk, w.FutureGrowth, w.Affordability,
+	} {
 		if math.IsNaN(v) || math.IsInf(v, 0) || v < 0 {
 			return false
 		}
@@ -26,7 +28,9 @@ func WeightsWellFormed(w models.PreferenceWeights) bool {
 
 // NormalizeWeights scales weights to sum to 100. Returns error if all zero or non-finite.
 func NormalizeWeights(w models.PreferenceWeights) (models.PreferenceWeights, error) {
-	vals := []float64{w.Investment, w.Lifestyle, w.Risk, w.FutureGrowth}
+	vals := []float64{
+		w.Investment, w.Lifestyle, w.Risk, w.FutureGrowth, w.Affordability,
+	}
 	sum := 0.0
 	for _, v := range vals {
 		if math.IsNaN(v) || math.IsInf(v, 0) || v < 0 {
@@ -38,10 +42,11 @@ func NormalizeWeights(w models.PreferenceWeights) (models.PreferenceWeights, err
 		return models.PreferenceWeights{}, ErrInvalidWeights
 	}
 	return models.PreferenceWeights{
-		Investment:   round1(w.Investment / sum * 100),
-		Lifestyle:    round1(w.Lifestyle / sum * 100),
-		Risk:         round1(w.Risk / sum * 100),
-		FutureGrowth: round1(w.FutureGrowth / sum * 100),
+		Investment:    round1(w.Investment / sum * 100),
+		Lifestyle:     round1(w.Lifestyle / sum * 100),
+		Risk:          round1(w.Risk / sum * 100),
+		FutureGrowth:  round1(w.FutureGrowth / sum * 100),
+		Affordability: round1(w.Affordability / sum * 100),
 	}, nil
 }
 
@@ -85,7 +90,9 @@ func (s *PropertyService) Rank(req models.RankRequest) (models.RankResponse, err
 	weights, err := NormalizeWeights(req.Weights)
 	if err != nil {
 		// Equal fallback when client sends zeros — treat as equal split.
-		weights = models.PreferenceWeights{Investment: 25, Lifestyle: 25, Risk: 25, FutureGrowth: 25}
+		weights = models.PreferenceWeights{
+			Investment: 20, Lifestyle: 20, Risk: 20, FutureGrowth: 20, Affordability: 20,
+		}
 	}
 
 	propertyType := req.PropertyType
@@ -315,17 +322,28 @@ func scoreDimensions(factors map[string]map[string]any, suburb models.Suburb) (m
 		contribNumber(factors, "investment_indicators", "building_approvals", "Building approvals", 0, 200, false, "", 0),
 	}
 
+	affordabilitySignals := []models.ScoreContribution{
+		contribMoney(factors, "affordability", "median_income", "Median income", 60_000, 220_000, false, " / year"),
+		contribMoney(factors, "affordability", "mortgage_repayment", "Mortgage repayment", 2_000, 10_000, true, " / month"),
+		contribRatio(factors, "affordability", "mortgage_income_ratio", "Mortgage / income ratio", 0.20, 0.80, true),
+		contribRatio(factors, "affordability", "rent_income_ratio", "Rent / income ratio", 0.20, 0.60, true),
+		contribMoney(factors, "affordability", "avg_family_income", "Average family income", 100_000, 300_000, false, " / year"),
+		contribMoney(factors, "affordability", "disposable_income", "Disposable income", 20_000, 150_000, false, " / year"),
+	}
+
 	dims := models.DimensionScores{
-		Investment:   round1(avgContributionPoints(invSignals)),
-		Lifestyle:    round1(avgContributionPoints(lifeSignals)),
-		Risk:         round1(avgContributionPoints(riskSignals)),
-		FutureGrowth: round1(avgContributionPoints(growthSignals)),
+		Investment:    round1(avgContributionPoints(invSignals)),
+		Lifestyle:     round1(avgContributionPoints(lifeSignals)),
+		Risk:          round1(avgContributionPoints(riskSignals)),
+		FutureGrowth:  round1(avgContributionPoints(growthSignals)),
+		Affordability: round1(avgContributionPoints(affordabilitySignals)),
 	}
 	breakdown := models.DimensionBreakdown{
-		Investment:   invSignals,
-		Lifestyle:    lifeSignals,
-		Risk:         riskSignals,
-		FutureGrowth: growthSignals,
+		Investment:    invSignals,
+		Lifestyle:     lifeSignals,
+		Risk:          riskSignals,
+		FutureGrowth:  growthSignals,
+		Affordability: affordabilitySignals,
 	}
 	return dims, breakdown
 }
@@ -365,6 +383,61 @@ func contribNumber(
 	return models.ScoreContribution{
 		Label:     label,
 		Value:     formatNumber(*raw, decimals) + suffix,
+		Points:    round1(pts),
+		Available: true,
+	}
+}
+
+func contribRatio(
+	factors map[string]map[string]any,
+	group, key, label string,
+	lo, hi float64,
+	invert bool,
+) models.ScoreContribution {
+	raw := numMetric(factors, group, key)
+	pts := metricScore(factors, group, key, lo, hi, false)
+	if invert {
+		pts = invertScore(pts)
+	}
+	if raw == nil {
+		return models.ScoreContribution{
+			Label:     label,
+			Value:     "Unavailable — scored neutral (50)",
+			Points:    round1(pts),
+			Available: false,
+		}
+	}
+	return models.ScoreContribution{
+		Label:     label,
+		Value:     formatNumber(*raw*100, 1) + "%",
+		Points:    round1(pts),
+		Available: true,
+	}
+}
+
+func contribMoney(
+	factors map[string]map[string]any,
+	group, key, label string,
+	lo, hi float64,
+	invert bool,
+	suffix string,
+) models.ScoreContribution {
+	raw := numMetric(factors, group, key)
+	pts := metricScore(factors, group, key, lo, hi, false)
+	if invert {
+		pts = invertScore(pts)
+	}
+	if raw == nil {
+		return models.ScoreContribution{
+			Label:     label,
+			Value:     "Unavailable — scored neutral (50)",
+			Points:    round1(pts),
+			Available: false,
+		}
+	}
+	return models.ScoreContribution{
+		Label:     label,
+		Value:     formatMoney(*raw) + suffix,
 		Points:    round1(pts),
 		Available: true,
 	}
@@ -478,14 +551,17 @@ func formatMoney(v float64) string {
 }
 
 func weightedScore(dims models.DimensionScores, w models.PreferenceWeights) float64 {
-	total := w.Investment + w.Lifestyle + w.Risk + w.FutureGrowth
+	total := w.Investment + w.Lifestyle + w.Risk + w.FutureGrowth + w.Affordability
 	if total <= 0 {
-		return round1((dims.Investment + dims.Lifestyle + dims.Risk + dims.FutureGrowth) / 4)
+		return round1(
+			(dims.Investment + dims.Lifestyle + dims.Risk + dims.FutureGrowth + dims.Affordability) / 5,
+		)
 	}
 	raw := (dims.Investment*w.Investment +
 		dims.Lifestyle*w.Lifestyle +
 		dims.Risk*w.Risk +
-		dims.FutureGrowth*w.FutureGrowth) / total
+		dims.FutureGrowth*w.FutureGrowth +
+		dims.Affordability*w.Affordability) / total
 	// Stretch away from the middle so seed rankings show clearer Good Buy / Overpriced bands.
 	stretched := 50 + (raw-50)*1.8
 	return round1(clamp(stretched, 0, 100))

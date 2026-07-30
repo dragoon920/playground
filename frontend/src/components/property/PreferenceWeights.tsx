@@ -1,13 +1,14 @@
 import type { PreferenceWeights } from '../../types/property'
 
-const KEYS = ['investment', 'lifestyle', 'risk', 'future_growth'] as const
+const KEYS = ['investment', 'lifestyle', 'risk', 'future_growth', 'affordability'] as const
 type WeightKey = (typeof KEYS)[number]
 
 const LABELS: Record<WeightKey, string> = {
   investment: 'Investment',
   lifestyle: 'Lifestyle',
-  risk: 'Risk',
-  future_growth: 'Future Growth',
+  risk: 'Stability',
+  future_growth: 'Growth',
+  affordability: 'Affordability',
 }
 
 /** Plain-language guidance shown on hover over each factor title. */
@@ -17,9 +18,11 @@ const DESCRIPTIONS: Record<WeightKey, string> = {
   lifestyle:
     'Day-to-day liveability — walkability, cafes and shops, schools, parks, and how easy it is to get around by train, metro, bus, or car. Raise this if you (or tenants) want a pleasant place to live.',
   risk:
-    'How much you want to avoid downside — crime levels, flood or bushfire exposure, oversupply from new building, and other hazard signals. Raise this if you prefer safer, more stable suburbs.',
+    'How stable and protected the suburb looks — lower crime, fewer flood or bushfire hazards, and less oversupply from new building. Raise this if you prefer safer, more stable suburbs. A higher Stability score is better.',
   future_growth:
     'Longer-term upside — population growth, planned infrastructure (metro, roads, hospitals), rezoning, and the development pipeline. Raise this if you are buying for capital growth over several years.',
+  affordability:
+    'How comfortably local household incomes cover housing costs — income, mortgage and rent burden, family income, and disposable income. A higher Affordability score is better.',
 }
 
 const BAR_COLORS: Record<WeightKey, string> = {
@@ -27,6 +30,7 @@ const BAR_COLORS: Record<WeightKey, string> = {
   lifestyle: 'bg-sky-600',
   risk: 'bg-amber-500',
   future_growth: 'bg-violet-600',
+  affordability: 'bg-rose-600',
 }
 
 const DOT_COLORS: Record<WeightKey, string> = {
@@ -34,6 +38,7 @@ const DOT_COLORS: Record<WeightKey, string> = {
   lifestyle: 'bg-sky-600',
   risk: 'bg-amber-500',
   future_growth: 'bg-violet-600',
+  affordability: 'bg-rose-600',
 }
 
 type Props = {
@@ -49,7 +54,7 @@ type Props = {
 export function effectiveShares(value: PreferenceWeights): Record<WeightKey, number> {
   const total = KEYS.reduce((acc, k) => acc + value[k], 0)
   if (total <= 0) {
-    return { investment: 25, lifestyle: 25, risk: 25, future_growth: 25 }
+    return { investment: 20, lifestyle: 20, risk: 20, future_growth: 20, affordability: 20 }
   }
 
   const exact = KEYS.map((k) => ({ key: k, raw: (value[k] / total) * 100 }))
@@ -57,7 +62,7 @@ export function effectiveShares(value: PreferenceWeights): Record<WeightKey, num
   let remaining = 100 - shares.reduce((acc, s) => acc + s.floor, 0)
 
   const byRemainder = [...shares].sort((a, b) => b.raw - b.floor - (a.raw - a.floor))
-  const result = { investment: 0, lifestyle: 0, risk: 0, future_growth: 0 }
+  const result = { investment: 0, lifestyle: 0, risk: 0, future_growth: 0, affordability: 0 }
   for (const s of shares) result[s.key] = s.floor
   for (const s of byRemainder) {
     if (remaining <= 0) break
@@ -158,7 +163,7 @@ export default function PreferenceWeightsControls({ value, onChange, disabled }:
 
       <p className="text-xs font-medium text-gray-500" aria-live="polite">
         {allZero
-          ? 'All weights are zero — every factor counts equally (25% each).'
+          ? 'All weights are zero — every factor counts equally (20% each).'
           : 'Bar and labels show each weight’s share of the ranking score (100% total).'}
       </p>
     </fieldset>

@@ -45,6 +45,9 @@ export async function fetchSuburbDetail(
   if (weights?.lifestyle != null) params.set('lifestyle', String(weights.lifestyle))
   if (weights?.risk != null) params.set('risk', String(weights.risk))
   if (weights?.future_growth != null) params.set('future_growth', String(weights.future_growth))
+  if (weights?.affordability != null) {
+    params.set('affordability', String(weights.affordability))
+  }
   const qs = params.toString()
   const res = await fetch(`${API}/property/suburbs/${encodeURIComponent(id)}${qs ? `?${qs}` : ''}`)
   if (!res.ok) throw new Error(await parseError(res))
@@ -67,6 +70,7 @@ export async function fetchMapFeatures(query: {
     params.set('lifestyle', String(query.weights.lifestyle))
     params.set('risk', String(query.weights.risk))
     params.set('future_growth', String(query.weights.future_growth))
+    params.set('affordability', String(query.weights.affordability))
   }
   const res = await fetch(`${API}/property/map?${params}`)
   if (!res.ok) throw new Error(await parseError(res))

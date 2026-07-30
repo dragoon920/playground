@@ -59,8 +59,9 @@ Static catalog in code or small table; v1: Sydney=`full`, others=`coming_soon`.
 | lifestyle | number | 0–100 |
 | risk | number | 0–100 |
 | future_growth | number | 0–100 |
+| affordability | number | 0–100 |
 
-**Validation**: Sum must equal 100 after normalization.
+**Validation**: Values are non-negative and normalized to 100; all-zero input uses equal 20% shares.
 
 ### PriceRange (request DTO)
 

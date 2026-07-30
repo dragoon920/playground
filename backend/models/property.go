@@ -16,9 +16,9 @@ const (
 type MapRating string
 
 const (
-	MapRatingGoodBuy     MapRating = "good_buy"
-	MapRatingNeutral     MapRating = "neutral"
-	MapRatingOverpriced  MapRating = "overpriced"
+	MapRatingGoodBuy    MapRating = "good_buy"
+	MapRatingNeutral    MapRating = "neutral"
+	MapRatingOverpriced MapRating = "overpriced"
 )
 
 type MetricOrigin string
@@ -76,10 +76,11 @@ type SuburbMetric struct {
 }
 
 type PreferenceWeights struct {
-	Investment   float64 `json:"investment"`
-	Lifestyle    float64 `json:"lifestyle"`
-	Risk         float64 `json:"risk"`
-	FutureGrowth float64 `json:"future_growth"`
+	Investment    float64 `json:"investment"`
+	Lifestyle     float64 `json:"lifestyle"`
+	Risk          float64 `json:"risk"`
+	FutureGrowth  float64 `json:"future_growth"`
+	Affordability float64 `json:"affordability"`
 }
 
 type PropertyType string
@@ -100,10 +101,11 @@ type RankRequest struct {
 }
 
 type DimensionScores struct {
-	Investment   float64 `json:"investment"`
-	Lifestyle    float64 `json:"lifestyle"`
-	Risk         float64 `json:"risk"`
-	FutureGrowth float64 `json:"future_growth"`
+	Investment    float64 `json:"investment"`
+	Lifestyle     float64 `json:"lifestyle"`
+	Risk          float64 `json:"risk"`
+	FutureGrowth  float64 `json:"future_growth"`
+	Affordability float64 `json:"affordability"`
 }
 
 // ScoreContribution is one input signal behind a dimension score.
@@ -116,10 +118,11 @@ type ScoreContribution struct {
 
 // DimensionBreakdown lists the metrics that produced each dimension score.
 type DimensionBreakdown struct {
-	Investment   []ScoreContribution `json:"investment"`
-	Lifestyle    []ScoreContribution `json:"lifestyle"`
-	Risk         []ScoreContribution `json:"risk"`
-	FutureGrowth []ScoreContribution `json:"future_growth"`
+	Investment    []ScoreContribution `json:"investment"`
+	Lifestyle     []ScoreContribution `json:"lifestyle"`
+	Risk          []ScoreContribution `json:"risk"`
+	FutureGrowth  []ScoreContribution `json:"future_growth"`
+	Affordability []ScoreContribution `json:"affordability"`
 }
 
 type RankedSuburb struct {
