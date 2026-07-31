@@ -13629,7 +13629,7 @@
       "postcode": "2011",
       "lat": -33.871,
       "lng": 151.228,
-      "median_house_price": 1852000,
+      "median_house_price": null,
       "median_unit_price": 1216000,
       "boundary_id": "elizabeth-bay",
       "factors": [
@@ -13639,7 +13639,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 1852000,
+            "median_house_price": null,
             "median_unit_price": 1216000,
             "price_per_sqm": 6610,
             "growth_1y": -0.2,
@@ -18356,7 +18356,7 @@
       "postcode": "2000",
       "lat": -33.879,
       "lng": 151.205,
-      "median_house_price": 2044000,
+      "median_house_price": null,
       "median_unit_price": 1671000,
       "boundary_id": "haymarket",
       "factors": [
@@ -18366,7 +18366,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 2044000,
+            "median_house_price": null,
             "median_unit_price": 1671000,
             "price_per_sqm": 6281,
             "growth_1y": 9.3,
@@ -34658,7 +34658,7 @@
       "postcode": "2011",
       "lat": -33.868,
       "lng": 151.226,
-      "median_house_price": 3086000,
+      "median_house_price": null,
       "median_unit_price": 1017000,
       "boundary_id": "potts-point",
       "factors": [
@@ -34668,7 +34668,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 3086000,
+            "median_house_price": null,
             "median_unit_price": 1017000,
             "price_per_sqm": 7528,
             "growth_1y": 5.8,
@@ -35820,7 +35820,7 @@
       "postcode": "2009",
       "lat": -33.869,
       "lng": 151.194,
-      "median_house_price": 1990000,
+      "median_house_price": null,
       "median_unit_price": 1506000,
       "boundary_id": "pyrmont",
       "factors": [
@@ -35830,7 +35830,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 1990000,
+            "median_house_price": null,
             "median_unit_price": 1506000,
             "price_per_sqm": 8403,
             "growth_1y": 7.8,
@@ -37063,7 +37063,7 @@
       "postcode": "2138",
       "lat": -33.829,
       "lng": 151.087,
-      "median_house_price": 1960000,
+      "median_house_price": null,
       "median_unit_price": 842000,
       "boundary_id": "rhodes",
       "factors": [
@@ -37073,7 +37073,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 1960000,
+            "median_house_price": null,
             "median_unit_price": 842000,
             "price_per_sqm": 5453,
             "growth_1y": 7.4,
@@ -43077,7 +43077,7 @@
       "postcode": "2000",
       "lat": -33.8688,
       "lng": 151.2093,
-      "median_house_price": 1921000,
+      "median_house_price": null,
       "median_unit_price": 1127000,
       "boundary_id": "sydney-cbd",
       "factors": [
@@ -43087,7 +43087,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 1921000,
+            "median_house_price": null,
             "median_unit_price": 1127000,
             "price_per_sqm": 6047,
             "growth_1y": 8.9,
@@ -43314,7 +43314,7 @@
       "postcode": "2127",
       "lat": -33.847,
       "lng": 151.07,
-      "median_house_price": 1073000,
+      "median_house_price": null,
       "median_unit_price": 850000,
       "boundary_id": "olympic-park",
       "factors": [
@@ -43324,7 +43324,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 1073000,
+            "median_house_price": null,
             "median_unit_price": 850000,
             "price_per_sqm": 3306,
             "growth_1y": 2.3,
@@ -44641,7 +44641,7 @@
       "postcode": "2007",
       "lat": -33.88,
       "lng": 151.197,
-      "median_house_price": 1645000,
+      "median_house_price": null,
       "median_unit_price": 1245000,
       "boundary_id": "ultimo",
       "factors": [
@@ -44651,7 +44651,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 1645000,
+            "median_house_price": null,
             "median_unit_price": 1245000,
             "price_per_sqm": 4150,
             "growth_1y": 5.4,
@@ -45673,7 +45673,7 @@
       "postcode": "2017",
       "lat": -33.9,
       "lng": 151.207,
-      "median_house_price": 2222000,
+      "median_house_price": null,
       "median_unit_price": 1388000,
       "boundary_id": "waterloo",
       "factors": [
@@ -45683,7 +45683,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 2222000,
+            "median_house_price": null,
             "median_unit_price": 1388000,
             "price_per_sqm": 6494,
             "growth_1y": 0.7,
@@ -48023,7 +48023,7 @@
       "postcode": "2205",
       "lat": -33.928,
       "lng": 151.154,
-      "median_house_price": 1796000,
+      "median_house_price": null,
       "median_unit_price": 895000,
       "boundary_id": "wolli-creek",
       "factors": [
@@ -48033,7 +48033,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 1796000,
+            "median_house_price": null,
             "median_unit_price": 895000,
             "price_per_sqm": 4585,
             "growth_1y": 6.9,
@@ -48201,7 +48201,7 @@
       "postcode": "2011",
       "lat": -33.87,
       "lng": 151.22,
-      "median_house_price": 3030000,
+      "median_house_price": null,
       "median_unit_price": 1151000,
       "boundary_id": "woolloomooloo",
       "factors": [
@@ -48211,7 +48211,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 3030000,
+            "median_house_price": null,
             "median_unit_price": 1151000,
             "price_per_sqm": 11658,
             "growth_1y": 0.7,
@@ -48638,7 +48638,7 @@
       "postcode": "2017",
       "lat": -33.907,
       "lng": 151.21,
-      "median_house_price": 2326000,
+      "median_house_price": null,
       "median_unit_price": 1027000,
       "boundary_id": "zetland",
       "factors": [
@@ -48648,7 +48648,7 @@
           "as_of": "2025-06-01",
           "origin": "seed",
           "metrics": {
-            "median_house_price": 2326000,
+            "median_house_price": null,
             "median_unit_price": 1027000,
             "price_per_sqm": 6759,
             "growth_1y": 7.2,
