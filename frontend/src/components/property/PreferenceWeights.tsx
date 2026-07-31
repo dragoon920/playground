@@ -117,7 +117,7 @@ export default function PreferenceWeightsControls({ value, onChange, disabled }:
 
       <div className="space-y-2">
         <div
-          className="flex h-3 overflow-hidden rounded-full bg-mist"
+          className="flex h-3 overflow-hidden rounded-full bg-mist/70"
           role="img"
           aria-label={KEYS.map((k) => `${LABELS[k]} ${shares[k]}%`).join(', ')}
         >

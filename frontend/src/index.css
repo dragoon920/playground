@@ -2,12 +2,14 @@
 
 @theme {
   --color-surface: #ffffff;
-  --color-canvas: #edf3fb;
-  --color-mist: #cbe3ef;
-  --color-accent: #5aa8d6;
-  --color-ink: #3a4163;
+  --color-canvas: #ffffff;
+  --color-card: #f5f5f7;
+  --color-mist: #d2d2d7;
+  --color-accent: #0066cc;
+  --color-ink: #1d1d1f;
+  --color-muted: #6e6e73;
   --color-accent-ink: #ffffff;
-  --font-sans: "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-sans: "SF Pro Text", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @layer base {
@@ -48,7 +50,7 @@
   border: 2px solid var(--color-accent);
   border-radius: 9999px;
   background: #fff;
-  box-shadow: 0 1px 2px rgb(58 65 99 / 0.2);
+  box-shadow: 0 1px 2px rgb(29 29 31 / 0.12);
   cursor: default;
 }
 
@@ -64,7 +66,7 @@
   border: 2px solid var(--color-accent);
   border-radius: 9999px;
   background: #fff;
-  box-shadow: 0 1px 2px rgb(58 65 99 / 0.2);
+  box-shadow: 0 1px 2px rgb(29 29 31 / 0.12);
   cursor: default;
 }
 
@@ -118,7 +120,7 @@
   border: 2px solid var(--color-accent);
   border-radius: 9999px;
   background: #fff;
-  box-shadow: 0 1px 2px rgb(58 65 99 / 0.2);
+  box-shadow: 0 1px 2px rgb(29 29 31 / 0.12);
 }
 
 .range-single::-moz-range-track {
@@ -139,7 +141,7 @@
   border: 2px solid var(--color-accent);
   border-radius: 9999px;
   background: #fff;
-  box-shadow: 0 1px 2px rgb(58 65 99 / 0.2);
+  box-shadow: 0 1px 2px rgb(29 29 31 / 0.12);
 }
 
 .range-single:focus-visible::-webkit-slider-thumb,
@@ -151,8 +153,8 @@
 .range-single:disabled::-webkit-slider-runnable-track {
   background: linear-gradient(
     to right,
-    rgb(58 65 99 / 0.3) 0%,
-    rgb(58 65 99 / 0.3) var(--range-progress, 0%),
+    rgb(29 29 31 / 0.25) 0%,
+    rgb(29 29 31 / 0.25) var(--range-progress, 0%),
     var(--color-mist) var(--range-progress, 0%),
     var(--color-mist) 100%
   );
@@ -164,5 +166,5 @@
 }
 
 .range-single:disabled::-moz-range-progress {
-  background: rgb(58 65 99 / 0.3);
+  background: rgb(29 29 31 / 0.25);
 }

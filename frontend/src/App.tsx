@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthContext'
 import Layout from './components/Layout'
 import AdminPage from './pages/AdminPage'
+import AboutPage from './pages/AboutPage'
 import JobsPage from './pages/JobsPage'
 import LoginPage from './pages/LoginPage'
 import PropertyInvestmentPage from './pages/PropertyInvestmentPage'
@@ -16,6 +17,7 @@ export default function App() {
             <Route index element={<TodoPage />} />
             <Route path="todo" element={<TodoPage />} />
             <Route path="property-investment" element={<PropertyInvestmentPage />} />
+            <Route path="about" element={<AboutPage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="admin" element={<AdminPage />} />
             <Route path="admin/jobs" element={<JobsPage />} />

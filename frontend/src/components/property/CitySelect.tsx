@@ -1,5 +1,6 @@
-import { inputClass } from '../../lib/styles'
+import { selectClass } from '../../lib/styles'
 import type { City } from '../../types/property'
+import SelectChevron from './SelectChevron'
 
 type Props = {
   cities: City[]
@@ -12,19 +13,22 @@ export default function CitySelect({ cities, value, onChange, disabled }: Props)
   return (
     <label className="block">
       <span className="mb-1.5 block text-sm font-medium text-ink">City</span>
-      <select
-        className={inputClass}
-        value={value}
-        disabled={disabled || cities.length === 0}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {cities.map((city) => (
-          <option key={city.id} value={city.id}>
-            {city.name}
-            {city.coverage !== 'full' ? ` (${city.coverage.replace(/_/g, ' ')})` : ''}
-          </option>
-        ))}
-      </select>
+      <span className="relative block">
+        <select
+          className={selectClass}
+          value={value}
+          disabled={disabled || cities.length === 0}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          {cities.map((city) => (
+            <option key={city.id} value={city.id}>
+              {city.name}
+              {city.coverage !== 'full' ? ` (${city.coverage.replace(/_/g, ' ')})` : ''}
+            </option>
+          ))}
+        </select>
+        <SelectChevron />
+      </span>
     </label>
   )
 }

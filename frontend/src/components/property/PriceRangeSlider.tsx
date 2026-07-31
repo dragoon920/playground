@@ -48,10 +48,10 @@ export default function PriceRangeSlider({
       </p>
 
       <div className="relative h-5">
-        <div className="absolute top-1/2 h-1.5 w-full -translate-y-1/2 rounded-full bg-mist" />
+        <div className="absolute top-1/2 h-1.5 w-full -translate-y-1/2 rounded-full bg-mist/70" />
         <div
           className={`absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full ${
-            disabled ? 'bg-ink/30' : 'bg-accent'
+            disabled ? 'bg-ink/25' : 'bg-accent'
           }`}
           style={{ left: `${minPct}%`, right: `${100 - maxPct}%` }}
         />

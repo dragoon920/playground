@@ -49,18 +49,18 @@ function ratingLabel(rating: MapRating): string {
 function ratingClass(rating: MapRating): string {
   switch (rating) {
     case 'good_buy':
-      return 'bg-accent/15 text-ink'
+      return 'bg-accent/10 text-accent'
     case 'overpriced':
-      return 'bg-red-100 text-red-800'
+      return 'bg-red-100 text-red-700'
     default:
-      return 'bg-mist text-ink'
+      return 'bg-mist/60 text-muted'
   }
 }
 
 function scoreToneClass(score: number): string {
   if (score >= 55) return 'text-accent'
-  if (score >= 48) return 'text-ink/70'
-  return 'text-ink/45'
+  if (score >= 48) return 'text-ink'
+  return 'text-muted'
 }
 
 function breakdownFor(
@@ -189,7 +189,7 @@ export default function Top100List({
 
   if (coverageMessage) {
     return (
-      <div className="rounded-xl border border-mist bg-canvas px-4 py-6 text-sm text-ink">
+      <div className="rounded-[1.1rem] bg-card px-4 py-6 text-sm text-ink">
         {coverageMessage}
       </div>
     )
@@ -214,7 +214,7 @@ export default function Top100List({
   return (
     <div>
       <ol
-        className="max-h-[36rem] space-y-2 overflow-y-auto pr-1"
+        className="max-h-[36rem] space-y-2 overflow-y-auto p-1"
         onScroll={closeTip}
         onMouseLeave={closeTip}
       >
@@ -225,14 +225,14 @@ export default function Top100List({
               <button
                 type="button"
                 onClick={() => onSelect(item.suburb_id)}
-                className={`w-full rounded-xl border px-4 py-3 text-left transition ${
+                className={`w-full rounded-[1.1rem] px-4 py-3.5 text-left transition ${
                   selected
-                    ? 'border-accent bg-canvas'
-                    : 'border-mist bg-surface hover:border-accent/40 hover:bg-canvas'
+                    ? 'bg-card shadow-sm outline outline-2 outline-accent/40 outline-offset-0'
+                    : 'bg-card hover:brightness-[0.98]'
                 }`}
               >
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-                  <span className="w-8 shrink-0 text-base font-semibold tabular-nums text-ink/35">
+                  <span className="w-8 shrink-0 text-base font-semibold tabular-nums text-muted">
                     {index + 1}
                   </span>
 
@@ -245,7 +245,7 @@ export default function Top100List({
                         {ratingLabel(item.map_rating)}
                       </span>
                     </span>
-                    <span className="mt-0.5 block text-xs tabular-nums text-ink/55">
+                    <span className="mt-0.5 block text-xs tabular-nums text-muted">
                       {item.median_price != null
                         ? `Median ${TYPE_LABELS[propertyType]} ${AUD.format(item.median_price)}`
                         : `Median ${TYPE_LABELS[propertyType]} price unavailable`}
@@ -258,7 +258,7 @@ export default function Top100List({
                     >
                       {item.score}
                     </span>
-                    <span className="block text-[0.65rem] uppercase tracking-wide text-ink/40">
+                    <span className="block text-[0.65rem] uppercase tracking-wide text-muted">
                       Score
                     </span>
                   </span>
@@ -282,12 +282,12 @@ export default function Top100List({
                           onMouseLeave={closeTip}
                         >
                           <span className="flex items-baseline justify-between gap-2 text-xs">
-                            <span className="truncate text-ink/55">{label}</span>
+                            <span className="truncate text-muted">{label}</span>
                             <span className="w-5 shrink-0 text-right font-medium tabular-nums text-ink">
                               {Math.round(value)}
                             </span>
                           </span>
-                          <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-mist">
+                          <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-mist/70">
                             <span
                               className={`block h-full rounded-full ${bar}`}
                               style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
