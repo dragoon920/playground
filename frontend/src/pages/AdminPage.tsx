@@ -85,7 +85,7 @@ export default function AdminPage() {
   return (
     <>
       <header className="mb-7">
-        <h1 className="text-4xl font-semibold tracking-tight text-gray-900">Users</h1>
+        <h1 className="text-4xl font-semibold tracking-tight text-ink">Users</h1>
         <p className="mt-1.5 text-gray-500">Create and manage accounts.</p>
       </header>
 
@@ -161,7 +161,7 @@ export default function AdminPage() {
                     <span
                       className={`inline-block rounded-full border px-2 py-0.5 text-xs ${
                         u.role === 'admin'
-                          ? 'border-teal-200 bg-teal-50 text-accent'
+                          ? 'border-mist bg-canvas text-accent'
                           : 'border-gray-200 bg-gray-50 text-gray-700'
                       }`}
                     >

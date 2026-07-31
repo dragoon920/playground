@@ -31,14 +31,14 @@ export default function LoginPage() {
         <p className="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-accent">
           Admin
         </p>
-        <h1 className="text-4xl font-semibold tracking-tight text-gray-900">Sign in</h1>
-        <p className="mt-1.5 text-gray-500">Admin login is required to manage users.</p>
+        <h1 className="text-4xl font-semibold tracking-tight text-ink">Sign in</h1>
+        <p className="mt-1.5 text-ink/55">Admin login is required to manage users.</p>
       </header>
 
       {error && <p className="mb-3 text-red-600">{error}</p>}
 
       <form className={`${cardClass} mb-4 grid gap-3.5 p-5`} onSubmit={onLogin}>
-        <label className="grid gap-1.5 text-sm text-gray-500">
+        <label className="grid gap-1.5 text-sm text-ink/55">
           Email
           <input
             type="email"
@@ -49,7 +49,7 @@ export default function LoginPage() {
             required
           />
         </label>
-        <label className="grid gap-1.5 text-sm text-gray-500">
+        <label className="grid gap-1.5 text-sm text-ink/55">
           Password
           <input
             type="password"
@@ -65,12 +65,12 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-ink/55">
         Default admin:{' '}
-        <code className="rounded bg-teal-50 px-1.5 py-0.5 text-accent">
+        <code className="rounded bg-canvas px-1.5 py-0.5 text-accent">
           admin@playground.local
         </code>{' '}
-        / <code className="rounded bg-teal-50 px-1.5 py-0.5 text-accent">admin123</code>
+        / <code className="rounded bg-canvas px-1.5 py-0.5 text-accent">admin123</code>
       </p>
     </div>
   )

@@ -26,19 +26,19 @@ const DESCRIPTIONS: Record<WeightKey, string> = {
 }
 
 const BAR_COLORS: Record<WeightKey, string> = {
-  investment: 'bg-teal-700',
-  lifestyle: 'bg-sky-600',
-  risk: 'bg-amber-500',
-  future_growth: 'bg-violet-600',
-  affordability: 'bg-rose-600',
+  investment: 'bg-[#ef476f]',
+  lifestyle: 'bg-[#ffafcc]',
+  risk: 'bg-[#06d6a0]',
+  future_growth: 'bg-[#118ab2]',
+  affordability: 'bg-[#5e60ce]',
 }
 
 const DOT_COLORS: Record<WeightKey, string> = {
-  investment: 'bg-teal-700',
-  lifestyle: 'bg-sky-600',
-  risk: 'bg-amber-500',
-  future_growth: 'bg-violet-600',
-  affordability: 'bg-rose-600',
+  investment: 'bg-[#ef476f]',
+  lifestyle: 'bg-[#ffafcc]',
+  risk: 'bg-[#06d6a0]',
+  future_growth: 'bg-[#118ab2]',
+  affordability: 'bg-[#5e60ce]',
 }
 
 type Props = {
@@ -88,7 +88,7 @@ function FactorLegendTitle({
     <span className="group relative inline-flex items-center gap-1.5">
       <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${DOT_COLORS[weightKey]}`} />
       <span
-        className="font-medium text-gray-800"
+        className="font-medium text-ink"
         tabIndex={0}
         aria-describedby={`factor-tip-${weightKey}`}
       >
@@ -97,7 +97,7 @@ function FactorLegendTitle({
       <span
         id={`factor-tip-${weightKey}`}
         role="tooltip"
-        className={`pointer-events-none absolute bottom-full z-30 mb-2 hidden w-64 max-w-[min(16rem,60vw)] rounded-lg border border-gray-200 bg-white px-3 py-2 text-left text-xs font-normal leading-relaxed text-gray-600 shadow-lg group-hover:block group-focus-within:block ${
+        className={`pointer-events-none absolute bottom-full z-30 mb-2 hidden w-64 max-w-[min(16rem,60vw)] rounded-lg border border-mist bg-surface px-3 py-2 text-left text-xs font-normal leading-relaxed text-ink/70 shadow-lg group-hover:block group-focus-within:block ${
           alignRight ? 'right-0' : 'left-0'
         }`}
       >
@@ -113,11 +113,11 @@ export default function PreferenceWeightsControls({ value, onChange, disabled }:
 
   return (
     <fieldset className="space-y-3" disabled={disabled}>
-      <legend className="text-sm font-medium text-gray-700">Preference weights</legend>
+      <legend className="text-sm font-medium text-ink">Preference weights</legend>
 
       <div className="space-y-2">
         <div
-          className="flex h-3 overflow-hidden rounded-full bg-gray-200"
+          className="flex h-3 overflow-hidden rounded-full bg-mist"
           role="img"
           aria-label={KEYS.map((k) => `${LABELS[k]} ${shares[k]}%`).join(', ')}
         >
@@ -132,11 +132,11 @@ export default function PreferenceWeightsControls({ value, onChange, disabled }:
             ) : null,
           )}
         </div>
-        <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-gray-600">
+        <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-ink/60">
           {KEYS.map((key, index) => (
             <li key={key} className="inline-flex items-center gap-1.5">
               <FactorLegendTitle weightKey={key} alignRight={index % 2 === 1} />
-              <span className="tabular-nums font-medium text-gray-800">{shares[key]}%</span>
+              <span className="tabular-nums font-medium text-ink">{shares[key]}%</span>
             </li>
           ))}
         </ul>
@@ -144,24 +144,25 @@ export default function PreferenceWeightsControls({ value, onChange, disabled }:
 
       {KEYS.map((key) => (
         <label key={key} className="flex items-center gap-3 text-sm">
-          <span className="inline-flex w-28 shrink-0 items-center gap-1.5 font-medium text-gray-700">
+          <span className="inline-flex w-28 shrink-0 items-center gap-1.5 font-medium text-ink">
             <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${DOT_COLORS[key]}`} />
             {LABELS[key]}
           </span>
           <input
             type="range"
-            className="min-w-0 flex-1 accent-[var(--color-accent,#16a34a)]"
+            className="range-single min-w-0 flex-1"
+            style={{ ['--range-progress' as string]: `${value[key]}%` }}
             min={0}
             max={100}
             step={1}
             value={value[key]}
             onChange={(e) => onChange({ ...value, [key]: Number(e.target.value) })}
           />
-          <span className="w-7 shrink-0 text-right tabular-nums text-gray-600">{value[key]}</span>
+          <span className="w-7 shrink-0 text-right tabular-nums text-ink/60">{value[key]}</span>
         </label>
       ))}
 
-      <p className="text-xs font-medium text-gray-500" aria-live="polite">
+      <p className="text-xs font-medium text-ink/50" aria-live="polite">
         {allZero
           ? 'All weights are zero — every factor counts equally (20% each).'
           : 'Bar and labels show each weight’s share of the ranking score (100% total).'}

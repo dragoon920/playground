@@ -118,10 +118,10 @@ export default function PropertyInvestmentPage() {
   return (
     <>
       <header className="mb-7">
-        <h1 className="text-4xl font-semibold tracking-tight text-gray-900">
+        <h1 className="text-4xl font-semibold tracking-tight text-ink">
           Property Investment Tool
         </h1>
-        <p className="mt-1.5 text-gray-500">
+        <p className="mt-1.5 text-ink/55">
           Filter suburbs by city, price, and preference weights — then review rankings,
           recommendations, and the map.
         </p>
@@ -129,10 +129,10 @@ export default function PropertyInvestmentPage() {
 
       <div className="space-y-6">
         <section
-          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+          className="rounded-2xl border border-mist bg-surface p-6 shadow-sm"
           aria-labelledby="property-filters-heading"
         >
-          <h2 id="property-filters-heading" className="text-lg font-semibold text-gray-900">
+          <h2 id="property-filters-heading" className="text-lg font-semibold text-ink">
             Filters
           </h2>
 
@@ -175,10 +175,10 @@ export default function PropertyInvestmentPage() {
         </section>
 
         <section
-          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+          className="rounded-2xl border border-mist bg-surface p-6 shadow-sm"
           aria-labelledby="property-list-heading"
         >
-          <h2 id="property-list-heading" className="text-lg font-semibold text-gray-900">
+          <h2 id="property-list-heading" className="text-lg font-semibold text-ink">
             Top 100
           </h2>
           <div className="mt-4">
@@ -195,19 +195,19 @@ export default function PropertyInvestmentPage() {
         </section>
 
         <section className={`${cardClass} p-6`} aria-labelledby="property-detail-heading">
-          <h2 id="property-detail-heading" className="text-lg font-semibold text-gray-900">
+          <h2 id="property-detail-heading" className="text-lg font-semibold text-ink">
             Detail & map
           </h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-ink/55">
             Recommendation card, factor panels, and interactive suburb map.
           </p>
           <div className="mt-4 grid gap-3 lg:grid-cols-2">
-            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500">
+            <div className="rounded-xl border border-dashed border-mist bg-canvas px-4 py-8 text-center text-sm text-ink/55">
               {selectedId
                 ? `Selected: ${items.find((i) => i.suburb_id === selectedId)?.name ?? selectedId} — recommendation arrives in the next phase.`
                 : 'Select a suburb to see score, pros/cons, and recommendation.'}
             </div>
-            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500">
+            <div className="rounded-xl border border-dashed border-mist bg-canvas px-4 py-8 text-center text-sm text-ink/55">
               Map area — Good Buy / Neutral / Overpriced colouring.
             </div>
           </div>

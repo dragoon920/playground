@@ -16,7 +16,7 @@ type Props = {
 export default function PropertyTypeSelect({ value, onChange, disabled }: Props) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-gray-700">Property type</span>
+      <span className="mb-1.5 block text-sm font-medium text-ink">Property type</span>
       <select
         className={inputClass}
         value={value}

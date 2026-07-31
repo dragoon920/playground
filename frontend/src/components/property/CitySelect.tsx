@@ -11,7 +11,7 @@ type Props = {
 export default function CitySelect({ cities, value, onChange, disabled }: Props) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-gray-700">City</span>
+      <span className="mb-1.5 block text-sm font-medium text-ink">City</span>
       <select
         className={inputClass}
         value={value}

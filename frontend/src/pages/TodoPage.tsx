@@ -69,7 +69,7 @@ export default function TodoPage() {
   return (
     <>
       <header className="mb-7">
-        <h1 className="text-4xl font-semibold tracking-tight text-gray-900">Todos</h1>
+        <h1 className="text-4xl font-semibold tracking-tight text-ink">Todos</h1>
         <p className="mt-1.5 text-gray-500">Open to everyone — no login required.</p>
       </header>
 

@@ -28,11 +28,11 @@ const DIMENSIONS: {
   label: string
   bar: string
 }[] = [
-  { key: 'investment', label: 'Investment', bar: 'bg-teal-700' },
-  { key: 'lifestyle', label: 'Lifestyle', bar: 'bg-sky-600' },
-  { key: 'risk', label: 'Stability', bar: 'bg-amber-500' },
-  { key: 'future_growth', label: 'Growth', bar: 'bg-violet-600' },
-  { key: 'affordability', label: 'Affordability', bar: 'bg-rose-600' },
+  { key: 'investment', label: 'Investment', bar: 'bg-[#ef476f]' },
+  { key: 'lifestyle', label: 'Lifestyle', bar: 'bg-[#ffafcc]' },
+  { key: 'risk', label: 'Stability', bar: 'bg-[#06d6a0]' },
+  { key: 'future_growth', label: 'Growth', bar: 'bg-[#118ab2]' },
+  { key: 'affordability', label: 'Affordability', bar: 'bg-[#5e60ce]' },
 ]
 
 function ratingLabel(rating: MapRating): string {
@@ -49,18 +49,18 @@ function ratingLabel(rating: MapRating): string {
 function ratingClass(rating: MapRating): string {
   switch (rating) {
     case 'good_buy':
-      return 'bg-emerald-100 text-emerald-800'
+      return 'bg-accent/15 text-ink'
     case 'overpriced':
       return 'bg-red-100 text-red-800'
     default:
-      return 'bg-amber-100 text-amber-800'
+      return 'bg-mist text-ink'
   }
 }
 
 function scoreToneClass(score: number): string {
-  if (score >= 55) return 'text-emerald-700'
-  if (score >= 48) return 'text-amber-700'
-  return 'text-gray-600'
+  if (score >= 55) return 'text-accent'
+  if (score >= 48) return 'text-ink/70'
+  return 'text-ink/45'
 }
 
 function breakdownFor(
@@ -90,22 +90,22 @@ function FactorTooltip({ tip }: { tip: TipState }) {
   return createPortal(
     <div
       role="tooltip"
-      className="pointer-events-none fixed z-50 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-left shadow-xl"
+      className="pointer-events-none fixed z-50 rounded-lg border border-mist bg-surface px-3 py-2.5 text-left shadow-xl"
       style={{
         left: tip.left,
         width: TIP_WIDTH,
         ...(tip.bottom != null ? { bottom: tip.bottom } : { top: tip.top ?? 0 }),
       }}
     >
-      <p className="text-xs font-semibold text-gray-900">
+      <p className="text-xs font-semibold text-ink">
         {tip.suburbName} — {tip.label} {Math.round(tip.score)}/100
       </p>
-      <p className="mt-0.5 text-[0.65rem] leading-snug text-gray-500">
+      <p className="mt-0.5 text-[0.65rem] leading-snug text-ink/55">
         Average of these inputs (missing values score as neutral 50):
       </p>
       <ul className="mt-2 space-y-1.5">
         {tip.contributions.length === 0 ? (
-          <li className="text-xs text-gray-500">No breakdown available.</li>
+          <li className="text-xs text-ink/55">No breakdown available.</li>
         ) : (
           tip.contributions.map((c) => (
             <li
@@ -113,12 +113,12 @@ function FactorTooltip({ tip }: { tip: TipState }) {
               className="flex items-start justify-between gap-3 text-xs leading-snug"
             >
               <span className="min-w-0">
-                <span className="font-medium text-gray-800">{c.label}</span>
-                <span className={`mt-0.5 block ${c.available ? 'text-gray-500' : 'text-amber-700'}`}>
+                <span className="font-medium text-ink">{c.label}</span>
+                <span className={`mt-0.5 block ${c.available ? 'text-ink/55' : 'text-accent'}`}>
                   {c.value}
                 </span>
               </span>
-              <span className="shrink-0 font-semibold tabular-nums text-gray-700">
+              <span className="shrink-0 font-semibold tabular-nums text-ink">
                 {Math.round(c.points)}
               </span>
             </li>
@@ -189,14 +189,14 @@ export default function Top100List({
 
   if (coverageMessage) {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-6 text-sm text-amber-900">
+      <div className="rounded-xl border border-mist bg-canvas px-4 py-6 text-sm text-ink">
         {coverageMessage}
       </div>
     )
   }
 
   if (loading) {
-    return <p className="py-8 text-center text-sm text-gray-500">Ranking suburbs…</p>
+    return <p className="py-8 text-center text-sm text-ink/55">Ranking suburbs…</p>
   }
 
   if (error) {
@@ -205,7 +205,7 @@ export default function Top100List({
 
   if (items.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-gray-500">
+      <p className="py-8 text-center text-sm text-ink/55">
         No suburbs match this city and price range.
       </p>
     )
@@ -227,25 +227,25 @@ export default function Top100List({
                 onClick={() => onSelect(item.suburb_id)}
                 className={`w-full rounded-xl border px-4 py-3 text-left transition ${
                   selected
-                    ? 'border-accent bg-accent/10'
-                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                    ? 'border-accent bg-canvas'
+                    : 'border-mist bg-surface hover:border-accent/40 hover:bg-canvas'
                 }`}
               >
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-                  <span className="w-8 shrink-0 text-base font-semibold tabular-nums text-gray-400">
+                  <span className="w-8 shrink-0 text-base font-semibold tabular-nums text-ink/35">
                     {index + 1}
                   </span>
 
                   <span className="min-w-0 flex-1 sm:w-56 sm:flex-none">
                     <span className="flex flex-wrap items-center gap-2">
-                      <span className="font-semibold text-gray-900">{item.name}</span>
+                      <span className="font-semibold text-ink">{item.name}</span>
                       <span
                         className={`rounded-md px-2 py-0.5 text-xs font-medium ${ratingClass(item.map_rating)}`}
                       >
                         {ratingLabel(item.map_rating)}
                       </span>
                     </span>
-                    <span className="mt-0.5 block text-xs tabular-nums text-gray-500">
+                    <span className="mt-0.5 block text-xs tabular-nums text-ink/55">
                       {item.median_price != null
                         ? `Median ${TYPE_LABELS[propertyType]} ${AUD.format(item.median_price)}`
                         : `Median ${TYPE_LABELS[propertyType]} price unavailable`}
@@ -258,7 +258,7 @@ export default function Top100List({
                     >
                       {item.score}
                     </span>
-                    <span className="block text-[0.65rem] uppercase tracking-wide text-gray-400">
+                    <span className="block text-[0.65rem] uppercase tracking-wide text-ink/40">
                       Score
                     </span>
                   </span>
@@ -282,12 +282,12 @@ export default function Top100List({
                           onMouseLeave={closeTip}
                         >
                           <span className="flex items-baseline justify-between gap-2 text-xs">
-                            <span className="truncate text-gray-500">{label}</span>
-                            <span className="w-5 shrink-0 text-right font-medium tabular-nums text-gray-700">
+                            <span className="truncate text-ink/55">{label}</span>
+                            <span className="w-5 shrink-0 text-right font-medium tabular-nums text-ink">
                               {Math.round(value)}
                             </span>
                           </span>
-                          <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+                          <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-mist">
                             <span
                               className={`block h-full rounded-full ${bar}`}
                               style={{ width: `${Math.max(0, Math.min(100, value))}%` }}

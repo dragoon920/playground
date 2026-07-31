@@ -187,7 +187,7 @@ export default function JobsPage() {
     <>
       <header className="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-semibold tracking-tight text-gray-900">Jobs</h1>
+          <h1 className="text-4xl font-semibold tracking-tight text-ink">Jobs</h1>
           <p className="mt-1.5 text-gray-500">Track applications in one list.</p>
         </div>
         <div className="flex shrink-0 flex-nowrap items-center gap-3">
@@ -251,7 +251,7 @@ export default function JobsPage() {
                     <span
                       className={`inline-block rounded-full border px-2 py-0.5 text-xs capitalize ${
                         job.status === 'applied'
-                          ? 'border-teal-200 bg-teal-50 text-accent'
+                          ? 'border-mist bg-canvas text-accent'
                           : 'border-red-200 bg-red-50 text-red-600'
                       }`}
                     >
