@@ -54,10 +54,11 @@ export default function AboutPage() {
           <p className="w-full text-left text-[1.05rem] leading-relaxed text-muted">
             I am a business-focused senior full stack engineer with 12+ years of experience building
             scalable web platforms, workflow automation, ERP systems, and API integrations across
-            SaaS, finance, telecommunications, and eCommerce. I work across the full delivery
-            lifecycle — architecture, estimation, stakeholder communication, mentoring, testing,
-            deployment, and production support — and this playground is where I experiment with those
-            ideas end to end.
+            SaaS, finance, telecommunications, and eCommerce. I have worked at Reejig, Eclipx Group,
+            Optus, Yatsal Distributors, and Revenue NSW, and earlier at VML, Hoyts, NSW AMES, and
+            Micro Pace. I work across the full delivery lifecycle — architecture, estimation,
+            stakeholder communication, mentoring, testing, deployment, and production support — and
+            this playground is where I experiment with those ideas end to end.
           </p>
         </div>
       </section>
