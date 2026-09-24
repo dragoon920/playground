@@ -7,6 +7,14 @@ import type { Job, JobListResponse } from '../types'
 
 const PAGE_SIZE = 40
 
+const JOB_STATUSES = ['applied', 'interview', 'rejected'] as const
+
+const statusStyles: Record<string, string> = {
+  applied: 'border-mist bg-canvas text-accent',
+  interview: 'border-green-200 bg-green-50 text-green-700',
+  rejected: 'border-red-200 bg-red-50 text-red-600',
+}
+
 type JobForm = {
   company: string
   role: string
@@ -161,6 +169,22 @@ export default function JobsPage() {
     }
   }
 
+  async function updateStatus(job: Job, status: string) {
+    if (status === job.status) return
+    setError(null)
+    setJobs((prev) => prev.map((j) => (j.id === job.id ? { ...j, status } : j)))
+    const res = await fetch(`${API}/jobs/${job.id}`, {
+      method: 'PATCH',
+      headers: jsonHeaders(token),
+      body: JSON.stringify({ status }),
+    })
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      setError(body.error || 'Could not update status')
+      setJobs((prev) => prev.map((j) => (j.id === job.id ? { ...j, status: job.status } : j)))
+    }
+  }
+
   async function deleteJob(job: Job) {
     if (!confirm(`Delete ${job.company}?`)) return
     setError(null)
@@ -248,15 +272,20 @@ export default function JobsPage() {
                     {job.salary || '—'}
                   </td>
                   <td className="border-b border-gray-200 px-2 py-3">
-                    <span
-                      className={`inline-block rounded-full border px-2 py-0.5 text-xs capitalize ${
-                        job.status === 'applied'
-                          ? 'border-mist bg-canvas text-accent'
-                          : 'border-red-200 bg-red-50 text-red-600'
+                    <select
+                      aria-label={`Status for ${job.company}`}
+                      value={job.status}
+                      onChange={(e) => updateStatus(job, e.target.value)}
+                      className={`max-w-full cursor-pointer rounded-full border px-2 py-0.5 text-xs capitalize outline-none focus:ring-2 focus:ring-accent/30 ${
+                        statusStyles[job.status] ?? statusStyles.applied
                       }`}
                     >
-                      {job.status}
-                    </span>
+                      {JOB_STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
                   </td>
                   <td className="border-b border-gray-200 px-2 py-3">
                     {job.url ? (
@@ -384,8 +413,11 @@ export default function JobsPage() {
                 value={form.status}
                 onChange={(e) => patchForm({ status: e.target.value })}
               >
-                <option value="applied">applied</option>
-                <option value="rejected">rejected</option>
+                {JOB_STATUSES.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
               </select>
               <input
                 className={inputClass}

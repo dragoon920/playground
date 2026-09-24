@@ -20,7 +20,7 @@ export type Job = {
   salary: string
   url: string
   note: string
-  status: 'applied' | 'rejected' | string
+  status: 'applied' | 'interview' | 'rejected' | string
   created_at: string
 }
 

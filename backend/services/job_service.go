@@ -22,10 +22,10 @@ func normalizeJobStatus(status string) (string, error) {
 		return "applied", nil
 	}
 	switch s {
-	case "applied", "rejected":
+	case "applied", "interview", "rejected":
 		return s, nil
 	default:
-		return "", fmt.Errorf("status must be applied or rejected")
+		return "", fmt.Errorf("status must be applied, interview or rejected")
 	}
 }
 
